@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>เข้าสู่ระบบ - ตลาดออนไลน์</title>
+  <style>
+    body { font-family: 'Kanit', sans-serif; background: #f5f7fa; margin:0; padding:30px; }
+    .container { max-width: 320px; margin: auto; background: white; padding: 24px; border-radius: 10px; box-shadow: 0 0 8px #ccc; }
+    h1 { text-align: center; color: #004085; margin-bottom: 20px; }
+    input[type=text] { width: 100%; padding: 10px; margin-bottom: 12px; border: 2px solid #004085; border-radius: 6px; }
+    button { width: 100%; background:#004085; border:none; color:#fff; padding:12px; font-weight: 700; border-radius: 30px; cursor: pointer; }
+    button:hover { background: #00274d; }
+    p { text-align: center; margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>เข้าสู่ระบบ</h1>
+    <form id="loginForm">
+      <input type="text" id="username" placeholder="ชื่อผู้ใช้" required />
+      <button type="submit">เข้าสู่ระบบ</button>
+    </form>
+    <p>ไม่มีบัญชี? ใช้ชื่ออะไรก็ได้เพื่อเข้าสู่ระบบ</p>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById('loginForm');
+    loginForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      if (username) {
+        localStorage.setItem('loggedInUser', username);
+        alert(`ยินดีต้อนรับคุณ ${username}!`);
+        window.location.href = 'marketplace.html';
+      }
+    });
+    if(localStorage.getItem('loggedInUser')) {
+      window.location.href = 'marketplace.html';
+    }
+  </script>
+</body>
+</html>

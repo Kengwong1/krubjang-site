@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>หมวดวิดีโอ - ครบจังดอทคอม</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS ที่ใช้ร่วมกับหน้าอื่นๆ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Kanit', sans-serif;
+        }
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+        }
+        .header-container {
+            background-color: #004d99;
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header-container h1 {
+            font-size: 2.5em;
+            margin-bottom: 5px;
+        }
+        .header-container p {
+            font-size: 1.2em;
+        }
+        .main-nav {
+            background-color: white;
+            padding: 10px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .main-nav a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            padding: 12px 20px;
+            border-radius: 8px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .main-nav a:hover, .main-nav a.active {
+            background-color: #0066cc;
+            color: white;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        .section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+        .section h2 {
+            margin-bottom: 20px;
+            color: #d90000;
+            font-size: 1.8em;
+            border-bottom: 3px solid #d90000;
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+        .footer {
+            background-color: #222;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        /* สไตล์เฉพาะหน้านี้ */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+        .video-card {
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            color: inherit;
+        }
+        .video-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        .video-thumbnail {
+            width: 100%;
+            height: 200px;
+            background-color: #ccc;
+            display: block;
+            object-fit: cover;
+        }
+        .video-content {
+            padding: 15px;
+        }
+        .video-content h3 {
+            font-size: 1.2em;
+            color: #004d99;
+            margin-bottom: 10px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .video-content p {
+            font-size: 0.9em;
+            color: #666;
+        }
+        .loading-message, .error-message {
+            text-align: center;
+            font-size: 1.2em;
+            color: #888;
+            padding: 50px 0;
+            grid-column: 1 / -1;
+        }
+        .error-message {
+            color: #d90000;
+        }
+        .ads {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header-container">
+        <h1>ครบจังดอทคอม</h1>
+        <p>ข่าว เกม บันเทิง ไอที ไลฟ์สไตล์ ครบจบในเว็บเดียว</p>
+    </header>
+    <nav class="main-nav">
+        <a href="index.html">หน้าแรก</a>
+        <a href="news.html">ข่าว</a>
+        <a href="lotto.html">ตรวจหวย</a>
+        <a href="horoscope.html">ดูดวง</a>
+        <a href="sport.html">กีฬา</a>
+        <a href="video.html" class="active">วีดีโอ</a>
+        <a href="games.html">เกมส์</a>
+        <a href="marketplace.html">ซื้อ-ขาย</a>
+        <a href="booking.html">จองออนไลน์</a>
+        <a href="contact.html">ติดต่อเรา</a>
+    </nav>
+    <div class="container">
+        <div class="ads">
+        </div>
+
+        <div class="section">
+            <h2>🔥 วิดีโอมาใหม่และเป็นกระแส</h2>
+            <div id="trending-video-grid" class="video-grid">
+                <p class="loading-message">กำลังโหลดวิดีโอที่กำลังเป็นกระแส...</p>
+            </div>
+        </div>
+        
+        <div class="ads">
+        </div>
+
+        <div class="section">
+            <h2>🍿 วิดีโอภาพยนตร์และซีรีส์</h2>
+            <div id="movie-series-video-grid" class="video-grid">
+                <p class="loading-message">กำลังโหลดวิดีโอภาพยนตร์และซีรีส์...</p>
+            </div>
+        </div>
+
+        <div class="ads">
+        </div>
+
+        <div class="section">
+            <h2>💻 วิดีโอความรู้และเทคโนโลยี</h2>
+            <div id="knowledge-tech-video-grid" class="video-grid">
+                <p class="loading-message">กำลังโหลดวิดีโอความรู้และเทคโนโลยี...</p>
+            </div>
+        </div>
+        
+        <div class="ads">
+        </div>
+
+        <div class="section">
+            <h2>🎮 วิดีโอเกม</h2>
+            <div id="gaming-video-grid" class="video-grid">
+                <p class="loading-message">กำลังโหลดวิดีโอเกม...</p>
+            </div>
+        </div>
+        
+        <div class="ads">
+        </div>
+
+        <div class="section">
+            <h2>🎬 วิดีโอข่าวบันเทิง</h2>
+            <div id="entertainment-news-video-grid" class="video-grid">
+                <p class="loading-message">กำลังโหลดวิดีโอข่าวบันเทิง...</p>
+            </div>
+        </div>
+        
+        <div class="ads">
+        </div>
+
+        <div class="section">
+            <h2>🎭 วิดีโอการ์ตูนและแอนิเมชัน</h2>
+            <div id="cartoon-video-grid" class="video-grid">
+                <p class="loading-message">กำลังโหลดวิดีโอการ์ตูนและแอนิเมชัน...</p>
+            </div>
+        </div>
+
+        <div class="ads">
+        </div>
+
+    </div>
+    <footer class="footer">
+        <p>© 2025 ครบจังดอทคอม | <a href="#" style="color:white; text-decoration: underline;">นโยบายความเป็นส่วนตัว</a></p>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // โค้ดสำหรับให้เมนู Active อัตโนมัติ
+            const currentPage = window.location.pathname.split("/").pop();
+            const mainNavLinks = document.querySelectorAll(".main-nav a");
+            mainNavLinks.forEach(link => {
+                const linkPage = link.getAttribute("href");
+                if (linkPage === currentPage || (currentPage === "" && linkPage === "index.html")) {
+                    link.classList.add("active");
+                } else {
+                    link.classList.remove("active");
+                }
+            });
+
+            const apiKey = 'AIzaSyDe9ca5SRnYppUCacq8gh2W1ygrkJUl_Lw';
+            
+            // ดึงข้อมูลวิดีโอตามหมวดหมู่
+            fetchVideos('trending', apiKey, 'UCgE_v5_vY7Y_y_Jj_B_D_bQ'); // Google Developers (ตัวอย่างช่องวิดีโอแนะนำ)
+            fetchVideos('movie-series', apiKey, 'UC-g0TqX1887e221-YQxR4RQ'); // Warner Bros. Thailand
+            fetchVideos('knowledge-tech', apiKey, 'UCp-06S73uBv2h9-Fk426X7w'); // TechOffside
+            fetchVideos('gaming', apiKey, 'UCtP0rI3a8b4iS7w_E2t2t5w'); // Online Station
+            fetchVideos('entertainment-news', apiKey, 'UCz-P1u9A6g4n2yG016h7e0A'); // Sanook
+            fetchVideos('cartoon', apiKey, 'UCoY7w_y_Y8o8e2_yW8_H_R_A'); // T-T-T Channel
+        });
+
+        async function fetchVideos(category, apiKey, channelId) {
+            const videoGrid = document.getElementById(`${category}-video-grid`);
+            const apiUrl = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet,id&order=date&maxResults=12`;
+
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+
+                if (data.items && data.items.length > 0) {
+                    videoGrid.innerHTML = ''; // เคลียร์ข้อความโหลด
+                    data.items.forEach(item => {
+                        if (item.id.kind === 'youtube#video') {
+                            const videoId = item.id.videoId;
+                            const videoTitle = item.snippet.title;
+                            const videoThumbnail = item.snippet.thumbnails.high.url;
+                            const videoLink = `https://www.youtube.com/watch?v=${videoId}`;
+                            
+                            const videoCard = `
+                                <a href="${videoLink}" class="video-card" target="_blank" rel="noopener noreferrer">
+                                    <img src="${videoThumbnail}" alt="${videoTitle}" class="video-thumbnail">
+                                    <div class="video-content">
+                                        <h3>${videoTitle}</h3>
+                                    </div>
+                                </a>
+                            `;
+                            videoGrid.innerHTML += videoCard;
+                        }
+                    });
+                } else {
+                    videoGrid.innerHTML = `<p class="error-message">ไม่พบวิดีโอในหมวดนี้</p>`;
+                }
+            } catch (error) {
+                console.error(`Error fetching videos for ${category}:`, error);
+                videoGrid.innerHTML = `<p class="error-message">ไม่สามารถโหลดข้อมูลวิดีโอได้</p>`;
+            }
+        }
+    </script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+</body>
+</html>

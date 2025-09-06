@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ดูดวงไพ่ยิปซี - ครบจังดอทคอม</title>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* CSS ที่ใช้ร่วมกับหน้าอื่นๆ */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Kanit', sans-serif;
+    }
+    body {
+      background-color: #f0f2f5;
+      color: #333;
+    }
+    .header-container {
+      background-color: #004d99;
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+    }
+    .header-container h1 {
+      font-size: 2.5em;
+      margin-bottom: 5px;
+    }
+    .header-container p {
+      font-size: 1.2em;
+    }
+    .main-nav {
+      background-color: white;
+      padding: 10px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .main-nav a {
+      text-decoration: none;
+      color: #333;
+      font-weight: bold;
+      padding: 12px 20px;
+      border-radius: 8px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .main-nav a:hover, .main-nav a.active {
+      background-color: #0066cc;
+      color: white;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+    .section {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      margin-bottom: 30px;
+    }
+    .section h2 {
+      margin-bottom: 20px;
+      color: #d90000;
+      font-size: 1.8em;
+      border-bottom: 3px solid #d90000;
+      padding-bottom: 10px;
+      display: inline-block;
+    }
+    .footer {
+      background-color: #222;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+    }
+    /* สไตล์เฉพาะหน้านี้ */
+    .tarot-area {
+      text-align: center;
+      padding: 30px;
+    }
+    #tarot-card {
+      width: 250px;
+      height: 400px;
+      border: 3px solid #8A2BE2;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: transform 0.5s;
+    }
+    #tarot-card:hover {
+      transform: scale(1.05);
+    }
+    #draw-button {
+      margin-top: 20px;
+      padding: 12px 25px;
+      font-size: 1.2em;
+      color: white;
+      background-color: #8A2BE2;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+    #draw-button:hover {
+      background-color: #9370db;
+      transform: translateY(-2px);
+    }
+    #result-area {
+      margin-top: 40px;
+      background-color: #f9f9f9;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    #card-name {
+      font-size: 2em;
+      color: #8A2BE2;
+      margin-bottom: 10px;
+    }
+    #card-meaning {
+      line-height: 1.8;
+      font-size: 1.1em;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <header class="header-container">
+    <h1>ครบจังดอทคอม</h1>
+    <p>ข่าว เกม บันเทิง ไอที ไลฟ์สไตล์ ครบจบในเว็บเดียว</p>
+  </header>
+  <nav class="main-nav">
+    <a href="index.html" class="active">หน้าแรก</a>
+    <a href="news.html">ข่าว</a>
+    <a href="lotto.html">ตรวจหวย</a>
+    <a href="horoscope.html">ดูดวง</a>
+    <a href="sport.html">กีฬา</a>
+    <a href="video.html">วีดีโอ</a>
+    <a href="games.html">เกมส์</a>
+    <a href="marketplace.html">ซื้อ-ขาย</a>
+    <a href="booking.html">จองออนไลน์</a>
+    <a href="contact.html">ติดต่อเรา</a>
+  </nav>
+  <div class="container">
+    <div class="ads">
+      </div>
+    <div class="section">
+      <div class="tarot-area">
+        <h2>🔮 ดูดวงไพ่ยิปซี</h2>
+        <p style="margin: 10px 0 20px; color: #777;">ตั้งจิตอธิษฐาน แล้วคลิกที่ไพ่เพื่อเปิดคำทำนายสำหรับวันนี้</p>
+        <img id="tarot-card" src="images/tarot_back.png" alt="ด้านหลังไพ่">
+        <button id="draw-button">เปิดไพ่</button>
+      </div>
+      <div id="result-area" style="display: none;">
+        <h3 id="card-name"></h3>
+        <p id="card-meaning"></p>
+      </div>
+    </div>
+    <div class="ads">
+      </div>
+  </div>
+  <footer class="footer">
+    <p>&copy; 2025 ครบจังดอทคอม | <a href="#" style="color:white; text-decoration: underline;">นโยบายความเป็นส่วนตัว</a></p>
+  </footer>
+  <script>
+    const tarotCards = [
+      {
+        name: 'The Fool',
+        image: 'images/tarot_the_fool.png',
+        meaning: 'เป็นไพ่แห่งการเริ่มต้นใหม่, การผจญภัย, และความไร้เดียงสา อาจหมายถึงการก้าวเข้าสู่เส้นทางใหม่โดยไม่กลัวสิ่งใด'
+      },
+      {
+        name: 'The Magician',
+        image: 'images/tarot_the_magician.png',
+        meaning: 'เป็นไพ่แห่งพลังงาน, ความสามารถ, และความคิดสร้างสรรค์ บ่งบอกถึงการมีเครื่องมือและความสามารถในการสร้างสรรค์สิ่งต่างๆ ให้เป็นจริง'
+      },
+      {
+        name: 'The High Priestess',
+        image: 'images/tarot_the_high_priestess.png',
+        meaning: 'เป็นไพ่แห่งความรู้, ความเข้าใจ, และสัญชาตญาณที่ลึกซึ้ง บ่งบอกถึงการฟังเสียงจากภายในและเชื่อในลางสังหรณ์ของตนเอง'
+      },
+      {
+        name: 'The Empress',
+        image: 'images/tarot_the_empress.png',
+        meaning: 'เป็นไพ่แห่งความอุดมสมบูรณ์, การเลี้ยงดู, และความสุขในชีวิต อาจหมายถึงการเริ่มต้นครอบครัว การตั้งครรภ์ หรือความสำเร็จที่งดงาม'
+      },
+      {
+        name: 'The Emperor',
+        image: 'images/tarot_the_emperor.png',
+        meaning: 'เป็นไพ่แห่งอำนาจ, ความมั่นคง, และการควบคุม บ่งบอกถึงความเป็นผู้นำ การตัดสินใจที่เด็ดขาด และความรับผิดชอบ'
+      },
+      {
+        name: 'The Lovers',
+        image: 'images/tarot_the_lovers.png',
+        meaning: 'เป็นไพ่แห่งความรัก, ความสัมพันธ์, และการตัดสินใจครั้งสำคัญในชีวิต อาจหมายถึงการเลือกเส้นทางที่ถูกต้องสำหรับตัวคุณ'
+      },
+      {
+        name: 'The Chariot',
+        image: 'images/tarot_the_chariot.png',
+        meaning: 'เป็นไพ่แห่งชัยชนะ, ความมุ่งมั่น, และการควบคุมทิศทางชีวิต บ่งบอกถึงความสำเร็จจากการใช้ความพยายามอย่างเต็มที่'
+      }
+      // คุณสามารถเพิ่มไพ่ใบอื่นๆ ได้ที่นี่
+    ];
+
+    const tarotCardElement = document.getElementById('tarot-card');
+    const drawButton = document.getElementById('draw-button');
+    const resultArea = document.getElementById('result-area');
+    const cardNameElement = document.getElementById('card-name');
+    const cardMeaningElement = document.getElementById('card-meaning');
+
+    let isCardDrawn = false;
+
+    const drawCard = () => {
+      if (isCardDrawn) {
+        // หากเปิดไพ่แล้ว ให้รีเซ็ตหน้าจอ
+        resetCard();
+        return;
+      }
+
+      // สุ่มเลือกไพ่จาก array
+      const randomIndex = Math.floor(Math.random() * tarotCards.length);
+      const selectedCard = tarotCards[randomIndex];
+
+      // แสดงผลไพ่
+      tarotCardElement.src = selectedCard.image;
+      tarotCardElement.alt = selectedCard.name;
+      cardNameElement.innerText = selectedCard.name;
+      cardMeaningElement.innerText = selectedCard.meaning;
+
+      // แสดงส่วนผลลัพธ์
+      resultArea.style.display = 'block';
+
+      // เปลี่ยนข้อความบนปุ่ม
+      drawButton.innerText = 'เปิดไพ่ใบใหม่';
+      isCardDrawn = true;
+    };
+
+    const resetCard = () => {
+      // ซ่อนผลลัพธ์
+      resultArea.style.display = 'none';
+
+      // แสดงด้านหลังไพ่
+      tarotCardElement.src = 'images/tarot_back.png';
+      tarotCardElement.alt = 'ด้านหลังไพ่';
+
+      // เปลี่ยนข้อความบนปุ่ม
+      drawButton.innerText = 'เปิดไพ่';
+      isCardDrawn = false;
+    };
+    
+    // ตั้งค่า event listener
+    drawButton.addEventListener('click', drawCard);
+    tarotCardElement.addEventListener('click', drawCard);
+  </script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</body>
+</html>

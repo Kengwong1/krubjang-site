@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกม Hangman ทายคำศัพท์</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: #f9f9f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            text-align: center;
+            flex-direction: column;
+            color: #333;
+        }
+        .game-area {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 500px;
+        }
+        h1 {
+            color: #d90000;
+            font-size: 1.8em;
+        }
+        #word-display {
+            font-size: 2.5em;
+            letter-spacing: 5px;
+            margin: 20px 0;
+        }
+        #guesses {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+        #message {
+            font-size: 1.2em;
+            color: #004d99;
+            min-height: 30px;
+        }
+        #keyboard {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 20px;
+        }
+        .key {
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .key:hover {
+            background-color: #004d99;
+        }
+        .key:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .reset-button {
+            background-color: #d90000;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-area">
+    <h1>เกม Hangman ทายคำศัพท์</h1>
+    <div id="word-display"></div>
+    <p id="guesses">ทายผิด: 0/6</p>
+    <p id="message">ทายตัวอักษรมาเลย!</p>
+    <div id="keyboard"></div>
+    <button id="reset-button" class="reset-button" style="display: none;">เล่นใหม่</button>
+</div>
+
+<script>
+    const words = ["กระต่าย", "ช้าง", "หมี", "สิงโต", "เสือ", "ม้าลาย", "จระเข้", "นกฮูก"];
+    let selectedWord = '';
+    let guessedLetters = [];
+    let wrongGuesses = 0;
+    const maxWrongGuesses = 6;
+
+    const wordDisplay = document.getElementById('word-display');
+    const guessesDisplay = document.getElementById('guesses');
+    const messageDisplay = document.getElementById('message');
+    const keyboard = document.getElementById('keyboard');
+    const resetButton = document.getElementById('reset-button');
+
+    function initializeGame() {
+        selectedWord = words[Math.floor(Math.random() * words.length)];
+        guessedLetters = [];
+        wrongGuesses = 0;
+        messageDisplay.textContent = 'ทายตัวอักษรมาเลย!';
+        resetButton.style.display = 'none';
+        
+        generateWordDisplay();
+        generateKeyboard();
+    }
+
+    function generateWordDisplay() {
+        let display = '';
+        for (const char of selectedWord) {
+            if (guessedLetters.includes(char)) {
+                display += char + ' ';
+            } else {
+                display += '_ ';
+            }
+        }
+        wordDisplay.textContent = display.trim();
+    }
+
+    function generateKeyboard() {
+        keyboard.innerHTML = '';
+        const alphabet = "กขคงจฉชซฌญฎฏฐฑฒณดตถทธนบปผฝพฟภมยรลวศษสหฬอฮ";
+        for (const char of alphabet) {
+            const keyButton = document.createElement('button');
+            keyButton.textContent = char;
+            keyButton.className = 'key';
+            keyButton.addEventListener('click', () => handleGuess(char));
+            keyboard.appendChild(keyButton);
+        }
+    }
+
+    function handleGuess(letter) {
+        if (guessedLetters.includes(letter)) return;
+        
+        guessedLetters.push(letter);
+        
+        // Find the specific button to disable.
+        Array.from(keyboard.children).forEach(key => {
+            if (key.textContent === letter) {
+                key.disabled = true;
+            }
+        });
+
+        if (selectedWord.includes(letter)) {
+            messageDisplay.textContent = 'ถูกต้อง!';
+        } else {
+            wrongGuesses++;
+            guessesDisplay.textContent = `ทายผิด: ${wrongGuesses}/${maxWrongGuesses}`;
+            messageDisplay.textContent = 'ผิด!';
+        }
+
+        generateWordDisplay();
+        checkGameStatus();
+    }
+
+    function checkGameStatus() {
+        const isWin = !wordDisplay.textContent.includes('_');
+        const isLose = wrongGuesses >= maxWrongGuesses;
+
+        if (isWin) {
+            messageDisplay.textContent = 'คุณชนะ! ยินดีด้วย!';
+            endGame();
+        } else if (isLose) {
+            messageDisplay.textContent = `คุณแพ้! คำที่ถูกต้องคือ "${selectedWord}"`;
+            endGame();
+        }
+    }
+
+    function endGame() {
+        Array.from(keyboard.children).forEach(key => key.disabled = true);
+        resetButton.style.display = 'block';
+    }
+
+    resetButton.addEventListener('click', initializeGame);
+
+    initializeGame();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>เกมส์ - ครบจังดอทคอม</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS ที่ใช้ร่วมกับหน้าอื่นๆ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Kanit', sans-serif;
+        }
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+        }
+        .header-container {
+            background-color: #004d99;
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header-container h1 {
+            font-size: 2.5em;
+            margin-bottom: 5px;
+        }
+        .header-container p {
+            font-size: 1.2em;
+        }
+        .main-nav {
+            background-color: white;
+            padding: 10px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .main-nav a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            padding: 12px 20px;
+            border-radius: 8px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .main-nav a:hover, .main-nav a.active {
+            background-color: #0066cc;
+            color: white;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        .section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+        .section h2 {
+            margin-bottom: 20px;
+            color: #d90000;
+            font-size: 1.8em;
+            border-bottom: 3px solid #d90000;
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+        .footer {
+            background-color: #222;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        /* สไตล์เฉพาะหน้านี้ */
+        #searchInput { 
+            width: 100%; max-width: 480px; margin: 18px auto; padding: 9px 14px; 
+            font-size: 1.07em; border-radius: 8px; border: 1px solid #ccc; display: block; 
+        }
+        .game-grid { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); 
+            gap: 22px;
+        }
+        .game-card {
+            background: #f7f7fa; border-radius: 12px; text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06); transition: transform .2s, box-shadow .2s;
+            padding: 15px 10px 22px 10px; cursor: pointer; position: relative; overflow: hidden;
+        }
+        .game-card:hover {
+            transform: translateY(-8px) scale(1.04);
+            box-shadow: 0 10px 30px rgba(0,80,180,0.13);
+        }
+        .game-card img {
+            width: 80px; height: 80px; margin-bottom: 12px; border-radius: 18px; 
+            box-shadow: 0 2px 6px rgba(0,0,0,0.07); object-fit: cover; background: #eee;
+        }
+        .game-card h3 { 
+            font-size: 1.15em; margin-bottom: 18px; color: #004d99;
+        }
+        .game-btn {
+            display: inline-block; background: linear-gradient(90deg,#0099ff,#004d99 70%);
+            color: #fff; padding: 8px 24px; border: none; border-radius: 24px; font-size: 1em;
+            font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 8px #0099ff44;
+        }
+        .game-btn:hover { 
+            background: linear-gradient(90deg,#007bff,#0055bb); transform: scale(1.05);
+        }
+        .ads {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        iframe {
+            width: 100%;
+            height: 250px;
+            border: 0;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header-container">
+        <h1>ครบจังดอทคอม</h1>
+        <p>ข่าว เกม บันเทิง ไอที ไลฟ์สไตล์ ครบจบในเว็บเดียว</p>
+    </header>
+    <nav class="main-nav">
+        <a href="index.html">หน้าแรก</a>
+        <a href="news.html">ข่าว</a>
+        <a href="lotto.html">ตรวจหวย</a>
+        <a href="horoscope.html">ดูดวง</a>
+        <a href="sport.html">กีฬา</a>
+        <a href="video.html">วีดีโอ</a>
+        <a href="games.html" class="active">เกมส์</a>
+        <a href="marketplace.html">ซื้อ-ขาย</a>
+        <a href="booking.html">จองออนไลน์</a>
+        <a href="contact.html">ติดต่อเรา</a>
+    </nav>
+    <div class="container">
+        <div class="ads">
+        </div>
+        <input type="text" id="searchInput" placeholder="ค้นหาเกม...">
+        <div class="section" id="action">
+            <h2>เกมแอคชั่น</h2>
+            <div class="game-grid">
+                <div class="game-card" data-title="Snake" onclick="window.open('https://webglmath.github.io/snake/', '_blank')">
+                    <img src="images/snake-icon.png" alt="Snake">
+                    <h3>Snake</h3>
+                    <button class="game-btn">เล่นเกม</button>
+                </div>
+                <div class="game-card" data-title="Tic Tac Toe" onclick="window.open('https://playtictactoe.org/', '_blank')">
+                    <img src="images/tic-tac-toe.png" alt="Tic Tac Toe">
+                    <h3>Tic Tac Toe</h3>
+                    <button class="game-btn">เล่นเกม</button>
+                </div>
+            </div>
+        </div>
+        <div class="ads">
+        </div>
+        <div class="section" id="puzzle">
+            <h2>เกมพัซเซิล</h2>
+            <div class="game-grid">
+                <div class="game-card" data-title="2048" onclick="window.open('https://play2048.co/', '_blank')">
+                    <img src="images/2048.png" alt="2048">
+                    <h3>2048</h3>
+                    <button class="game-btn">เล่นเกม</button>
+                </div>
+                <div class="game-card" data-title="Logic Traffic" onclick="window.open('https://www.mathplayground.com/logic-traffic.html', '_blank')">
+                    <img src="https://www.mathplayground.com/wpimages/traffic_jam_puzzle.jpg" alt="Logic Traffic">
+                    <h3>Logic Traffic</h3>
+                    <button class="game-btn">เล่นเกม</button>
+                </div>
+            </div>
+        </div>
+        <div class="ads">
+        </div>
+        <div class="section" id="sports">
+            <h2>เกมกีฬา</h2>
+            <div class="game-grid">
+                <div class="game-card" data-title="8 Ball Pool" onclick="window.open('https://www.miniclip.com/games/8-ball-pool-multiplayer/en/', '_blank')">
+                    <img src="images/8 Ball Pool.png" alt="8 Ball Pool">
+                    <h3>8 Ball Pool</h3>
+                    <button class="game-btn">เล่นเกม</button>
+                </div>
+            </div>
+        </div>
+        <div class="ads">
+        </div>
+        <div class="section" id="funny">
+            <h2>เกมตลก</h2>
+            <div class="game-grid">
+                <div class="game-card" data-title="Quirky Turkey" onclick="window.open('https://poki.com/en/g/quirky-turkey', '_blank')">
+                    <img src="images/Quirky Turkey.png" alt="Quirky Turkey">
+                    <h3>Quirky Turkey</h3>
+                    <button class="game-btn">เล่นเกม</button>
+                </div>
+            </div>
+        </div>
+        <div class="ads">
+        </div>
+        <div class="section">
+            <h2>รีวิวจาก YouTube</h2>
+            <div class="game-grid">
+                <iframe src="https://www.youtube.com/embed/videoseries?list=PLz_hD_F5_lB_6pT_B_R1Z2Z_L_x_C3_O3" allowfullscreen></iframe>
+                <iframe src="https://www.youtube.com/embed/videoseries?list=PLz_hD_F5_lB_6pT_B_R1Z2Z_L_x_C3_O3" allowfullscreen></iframe>
+            </div>
+        </div>
+        <div class="ads">
+        </div>
+    </div>
+    <footer class="footer">
+        <p>© 2025 ครบจังดอทคอม | <a href="#" style="color:white; text-decoration: underline;">นโยบายความเป็นส่วนตัว</a></p>
+    </footer>
+    <script>
+        // โค้ดสำหรับให้เมนู Active อัตโนมัติ
+        document.addEventListener("DOMContentLoaded", function () {
+            const currentPage = window.location.pathname.split("/").pop();
+            const menuLinks = document.querySelectorAll(".main-nav a");
+
+            menuLinks.forEach(link => {
+                const linkPage = link.getAttribute("href");
+                if (linkPage === currentPage || (currentPage === "" && linkPage === "index.html")) {
+                    link.classList.add("active");
+                } else {
+                    link.classList.remove("active");
+                }
+            });
+        });
+
+        // โค้ดสำหรับระบบค้นหา
+        document.getElementById("searchInput").addEventListener("input", function () {
+            const keyword = this.value.toLowerCase();
+            document.querySelectorAll(".game-card").forEach(card => {
+                const title = card.dataset.title.toLowerCase();
+                card.style.display = title.includes(keyword) ? "" : "none";
+            });
+        });
+    </script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+</body>
+</html>

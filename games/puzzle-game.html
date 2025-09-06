@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกมสไลด์ปริศนาภาพ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: #f9f9f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            text-align: center;
+            flex-direction: column;
+            color: #333;
+        }
+        .game-area {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #004d99;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+        #puzzle-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            width: 100%;
+            max-width: 300px;
+            aspect-ratio: 1 / 1;
+            border: 2px solid #333;
+            background-color: #333;
+            margin: 20px auto;
+        }
+        .tile {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border: 1px solid #ccc;
+            font-size: 2em;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            background-size: 300% 300%;
+            transition: transform 0.2s ease-in-out;
+            background-image: var(--puzzle-image-url);
+        }
+        .tile.empty {
+            background-image: none;
+            background-color: #f0f0f0;
+            cursor: default;
+            pointer-events: none;
+            border: 1px dashed #999;
+        }
+        
+        #message {
+            margin-top: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+            min-height: 30px;
+        }
+        .controls {
+            margin-top: 15px;
+        }
+        .controls button {
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .controls button:hover {
+            background-color: #004d99;
+        }
+        #hint-image {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border: 2px solid #333;
+            display: none;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-area">
+    <h1>เกมสไลด์ปริศนาภาพ</h1>
+    <div id="puzzle-board"></div>
+    <p id="message">คลิกปุ่ม 'เริ่มเกม' เพื่อเริ่ม</p>
+    <div class="controls">
+        <button id="start-button">เริ่มเกม</button>
+        <button id="hint-button">ดูภาพ</button>
+    </div>
+    <img id="hint-image" src="" alt="ภาพต้นฉบับ">
+</div>
+
+<script>
+    const boardElement = document.getElementById('puzzle-board');
+    const messageElement = document.getElementById('message');
+    const startButton = document.getElementById('start-button');
+    const hintButton = document.getElementById('hint-button');
+    const hintImageElement = document.getElementById('hint-image');
+    
+    // =========================================================================
+    //   เปลี่ยน URL ของรูปภาพได้ที่นี่
+    // =========================================================================
+    const puzzleImage = 'https://i.imgur.com/8Qk7tXv.jpeg'; 
+    // ตัวอย่าง: 'https://via.placeholder.com/300x300/e66465/9198e5?text=Puzzle+Image'
+    // =========================================================================
+
+    const gridSize = 3;
+    const boardSize = gridSize * gridSize;
+    let tiles = [];
+    let emptyTileIndex;
+    let isGameRunning = false;
+    
+    document.documentElement.style.setProperty('--puzzle-image-url', `url('${puzzleImage}')`);
+
+    function initializeBoard() {
+        boardElement.innerHTML = '';
+        tiles = [];
+        
+        for (let i = 0; i < boardSize; i++) {
+            const tile = document.createElement('div');
+            tile.className = 'tile';
+            tile.dataset.value = i;
+            tile.addEventListener('click', () => moveTile(i));
+            
+            const row = Math.floor(i / gridSize);
+            const col = i % gridSize;
+            const x = (col * 100) / (gridSize - 1);
+            const y = (row * 100) / (gridSize - 1);
+            tile.style.backgroundPosition = `${x}% ${y}%`;
+            
+            boardElement.appendChild(tile);
+            tiles.push(tile);
+        }
+        
+        emptyTileIndex = boardSize - 1;
+        tiles[emptyTileIndex].classList.add('empty');
+        tiles[emptyTileIndex].dataset.value = -1;
+        hintImageElement.src = puzzleImage;
+    }
+    
+    function shuffleBoard() {
+        do {
+            const arr = Array.from({ length: boardSize - 1 }, (_, i) => i);
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            arr.push(-1);
+            
+            if (isSolvable(arr)) {
+                tiles.forEach((tile, index) => {
+                    const value = arr[index];
+                    if (value !== -1) {
+                        tile.dataset.value = value;
+                        tile.classList.remove('empty');
+                        const row = Math.floor(value / gridSize);
+                        const col = value % gridSize;
+                        const x = (col * 100) / (gridSize - 1);
+                        const y = (row * 100) / (gridSize - 1);
+                        tile.style.backgroundPosition = `${x}% ${y}%`;
+                    } else {
+                        tile.dataset.value = -1;
+                        tile.classList.add('empty');
+                        emptyTileIndex = index;
+                    }
+                });
+                break;
+            }
+        } while (true);
+    }
+    
+    function isSolvable(arr) {
+        let inversions = 0;
+        for (let i = 0; i < arr.length - 1; i++) {
+            for (let j = i + 1; j < arr.length; j++) {
+                if (arr[i] !== -1 && arr[j] !== -1 && arr[i] > arr[j]) {
+                    inversions++;
+                }
+            }
+        }
+        return inversions % 2 === 0;
+    }
+    
+    function moveTile(index) {
+        if (!isGameRunning) return;
+        
+        const row = Math.floor(index / gridSize);
+        const col = index % gridSize;
+        const emptyRow = Math.floor(emptyTileIndex / gridSize);
+        const emptyCol = emptyTileIndex % gridSize;
+        
+        const isNeighbor = (Math.abs(row - emptyRow) + Math.abs(col - emptyCol)) === 1;
+
+        if (isNeighbor) {
+            swapTiles(index, emptyTileIndex);
+            emptyTileIndex = index;
+            checkWin();
+        }
+    }
+    
+    function swapTiles(index1, index2) {
+        const tile1 = tiles[index1];
+        const tile2 = tiles[index2];
+        
+        const tempValue = tile1.dataset.value;
+        const tempClass = tile1.className;
+        const tempBackground = tile1.style.backgroundPosition;
+
+        tile1.dataset.value = tile2.dataset.value;
+        tile1.className = tile2.className;
+        tile1.style.backgroundPosition = tile2.style.backgroundPosition;
+
+        tile2.dataset.value = tempValue;
+        tile2.className = tempClass;
+        tile2.style.backgroundPosition = tempBackground;
+    }
+
+    function checkWin() {
+        let isSolved = true;
+        for (let i = 0; i < boardSize - 1; i++) {
+            if (parseInt(tiles[i].dataset.value) !== i) {
+                isSolved = false;
+                break;
+            }
+        }
+        if (isSolved) {
+            isGameRunning = false;
+            tiles[emptyTileIndex].classList.remove('empty');
+            tiles[emptyTileIndex].dataset.value = boardSize - 1;
+            const lastRow = Math.floor((boardSize - 1) / gridSize);
+            const lastCol = (boardSize - 1) % gridSize;
+            const x = (lastCol * 100) / (gridSize - 1);
+            const y = (lastRow * 100) / (gridSize - 1);
+            tiles[emptyTileIndex].style.backgroundPosition = `${x}% ${y}%`;
+            
+            messageElement.textContent = '🎉 ยินดีด้วย! คุณแก้ปริศนาได้แล้ว!';
+            startButton.textContent = 'เริ่มใหม่';
+        }
+    }
+
+    function startGame() {
+        if (!isGameRunning) {
+            initializeBoard();
+        }
+        shuffleBoard();
+        isGameRunning = true;
+        messageElement.textContent = 'เลื่อนชิ้นส่วนที่อยู่ติดกับช่องว่างเพื่อเรียงภาพ';
+        startButton.textContent = 'สลับใหม่';
+    }
+
+    startButton.addEventListener('click', startGame);
+
+    hintButton.addEventListener('mousedown', () => {
+        hintImageElement.style.display = 'block';
+    });
+    hintButton.addEventListener('mouseup', () => {
+        hintImageElement.style.display = 'none';
+    });
+    hintButton.addEventListener('touchstart', () => {
+        hintImageElement.style.display = 'block';
+    });
+    hintButton.addEventListener('touchend', () => {
+        hintImageElement.style.display = 'none';
+    });
+    
+    initializeBoard();
+</script>
+</body>
+</html>

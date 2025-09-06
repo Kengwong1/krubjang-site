@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ทำนายจากวันเกิด - ครบจังดอทคอม</title>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* CSS ที่ใช้ร่วมกับหน้าอื่นๆ */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Kanit', sans-serif;
+    }
+    body {
+      background-color: #f0f2f5;
+      color: #333;
+    }
+    .header-container {
+      background-color: #004d99;
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+    }
+    .header-container h1 {
+      font-size: 2.5em;
+      margin-bottom: 5px;
+    }
+    .header-container p {
+      font-size: 1.2em;
+    }
+    .main-nav {
+      background-color: white;
+      padding: 10px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .main-nav a {
+      text-decoration: none;
+      color: #333;
+      font-weight: bold;
+      padding: 12px 20px;
+      border-radius: 8px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .main-nav a:hover, .main-nav a.active {
+      background-color: #0066cc;
+      color: white;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+    .section {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      margin-bottom: 30px;
+    }
+    .section h2 {
+      margin-bottom: 20px;
+      color: #d90000;
+      font-size: 1.8em;
+      border-bottom: 3px solid #d90000;
+      padding-bottom: 10px;
+      display: inline-block;
+    }
+    .footer {
+      background-color: #222;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+    }
+    /* สไตล์เฉพาะหน้านี้ */
+    .birthday-form-area {
+      text-align: center;
+      padding: 30px;
+    }
+    .birthday-form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+    .birthday-form label {
+      font-size: 1.1em;
+      font-weight: bold;
+    }
+    .birthday-form input[type="date"] {
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+    }
+    .birthday-form button {
+      padding: 12px 25px;
+      font-size: 1.2em;
+      color: white;
+      background-color: #e91e63;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+    .birthday-form button:hover {
+      background-color: #d81b60;
+      transform: translateY(-2px);
+    }
+    #result-area {
+      margin-top: 40px;
+      background-color: #f9f9f9;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    #result-area h3 {
+      font-size: 2em;
+      color: #e91e63;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    #result-area p {
+      line-height: 1.8;
+      font-size: 1.1em;
+      color: #555;
+    }
+    #result-area h4 {
+        color: #004d99;
+        font-size: 1.2em;
+        margin-top: 15px;
+        margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+  <header class="header-container">
+    <h1>ครบจังดอทคอม</h1>
+    <p>ข่าว เกม บันเทิง ไอที ไลฟ์สไตล์ ครบจบในเว็บเดียว</p>
+  </header>
+  <nav class="main-nav">
+    <a href="index.html" class="active">หน้าแรก</a>
+    <a href="news.html">ข่าว</a>
+    <a href="lotto.html">ตรวจหวย</a>
+    <a href="horoscope.html">ดูดวง</a>
+    <a href="sport.html">กีฬา</a>
+    <a href="video.html">วีดีโอ</a>
+    <a href="games.html">เกมส์</a>
+    <a href="marketplace.html">ซื้อ-ขาย</a>
+    <a href="booking.html">จองออนไลน์</a>
+    <a href="contact.html">ติดต่อเรา</a>
+  </nav>
+  <div class="container">
+    <div class="ads">
+      </div>
+    <div class="section">
+      <div class="birthday-form-area">
+        <h2>🎂 ทำนายจากวันเกิด</h2>
+        <p style="margin: 10px 0 20px; color: #777;">กรุณากรอกวัน เดือน ปีเกิด เพื่อรับคำทำนายส่วนตัวของคุณ</p>
+        <div class="birthday-form">
+          <label for="birthdate">เลือกวันเกิดของคุณ:</label>
+          <input type="date" id="birthdate">
+          <button id="predict-button">ดูคำทำนาย</button>
+        </div>
+      </div>
+      <div id="result-area" style="display: none;">
+        <h3 id="result-title"></h3>
+        <p id="result-text"></p>
+        <h4>เลขนำโชคของคุณคือ: <span id="lucky-number"></span></h4>
+      </div>
+    </div>
+    <div class="ads">
+      </div>
+  </div>
+  <footer class="footer">
+    <p>&copy; 2025 ครบจังดอทคอม | <a href="#" style="color:white; text-decoration: underline;">นโยบายความเป็นส่วนตัว</a></p>
+  </footer>
+  <script>
+    const predictions = {
+        0: {
+            title: 'คนใจกว้าง',
+            text: 'คุณเป็นคนที่มีจิตใจดีและชอบช่วยเหลือผู้อื่น มีความเมตตาและมองโลกในแง่ดี มักเป็นที่รักของคนรอบข้าง แต่บางครั้งอาจใจอ่อนจนเกินไป',
+            luckyNumber: '1, 5, 8'
+        },
+        1: {
+            title: 'นักคิดนักวางแผน',
+            text: 'คุณเป็นคนฉลาด มีไหวพริบดี และชอบวางแผนชีวิตอย่างรอบคอบ มีความสามารถในการแก้ไขปัญหาเฉพาะหน้าได้เป็นอย่างดี มีความมุ่งมั่นสูงและชอบความท้าทาย',
+            luckyNumber: '2, 7, 9'
+        },
+        2: {
+            title: 'นักสร้างสันติ',
+            text: 'คุณเป็นคนใจเย็น มีความอดทนสูง และชอบความสงบ มีความสามารถในการปรับตัวเข้ากับสถานการณ์ต่างๆ ได้ดี เป็นที่พึ่งพาของคนรอบข้างเสมอ',
+            luckyNumber: '3, 6, 8'
+        },
+        3: {
+            title: 'ผู้มีความคิดสร้างสรรค์',
+            text: 'คุณเป็นคนที่มีความคิดสร้างสรรค์และจินตนาการสูง ชอบทำอะไรที่ไม่เหมือนใคร มีความสามารถด้านศิลปะและดนตรี แต่บางครั้งอาจเจ้าอารมณ์ไปบ้าง',
+            luckyNumber: '4, 5, 7'
+        },
+        4: {
+            title: 'นักสำรวจ',
+            text: 'คุณเป็นคนรักอิสระ ชอบการเดินทางและผจญภัย มีความกล้าหาญและไม่กลัวการเปลี่ยนแปลง ชอบเรียนรู้สิ่งใหม่ๆ และมีมนุษยสัมพันธ์ดีเยี่ยม',
+            luckyNumber: '1, 3, 5'
+        },
+        5: {
+            title: 'นักเจรจา',
+            text: 'คุณเป็นคนที่มีเสน่ห์และมีวาทศิลป์ดีเยี่ยม มีความสามารถในการโน้มน้าวใจผู้อื่นได้ดี มีความคิดเป็นเหตุเป็นผลและชอบความยุติธรรม',
+            luckyNumber: '6, 7, 9'
+        },
+        6: {
+            title: 'นักไตร่ตรอง',
+            text: 'คุณเป็นคนช่างคิดและมีหลักการ มีความสามารถในการวิเคราะห์เรื่องต่างๆ ได้อย่างลึกซึ้ง ชอบอยู่คนเดียวเพื่อทบทวนตัวเองและหาคำตอบให้กับชีวิต',
+            luckyNumber: '2, 4, 8'
+        },
+        7: {
+            title: 'ผู้นำที่กล้าหาญ',
+            text: 'คุณเป็นคนที่มีความเป็นผู้นำสูง มีความกล้าหาญและไม่กลัวอุปสรรค ชอบช่วยเหลือผู้อื่นและเป็นที่พึ่งพาของคนรอบข้าง มีความรับผิดชอบสูงและมุ่งมั่นในเป้าหมาย',
+            luckyNumber: '1, 5, 7'
+        },
+        8: {
+            title: 'นักสังคมสงเคราะห์',
+            text: 'คุณเป็นคนใจกว้าง มีความเมตตาและชอบช่วยเหลือสังคม มีความเสียสละและไม่หวังผลตอบแทน มักจะอุทิศตนเพื่อส่วนรวมและชอบความยุติธรรม',
+            luckyNumber: '3, 6, 9'
+        },
+        9: {
+            title: 'ผู้ทรงอิทธิพล',
+            text: 'คุณเป็นคนที่มีพลังอำนาจและอิทธิพลสูง มีความสามารถในการโน้มน้าวใจคนจำนวนมาก ชอบการทำงานที่ท้าทายและเป็นที่ยอมรับในสังคม',
+            luckyNumber: '2, 5, 8'
+        }
+    };
+    
+    const birthdateInput = document.getElementById('birthdate');
+    const predictButton = document.getElementById('predict-button');
+    const resultArea = document.getElementById('result-area');
+    const resultTitle = document.getElementById('result-title');
+    const resultText = document.getElementById('result-text');
+    const luckyNumber = document.getElementById('lucky-number');
+
+    predictButton.addEventListener('click', () => {
+        const birthdate = birthdateInput.value;
+        if (!birthdate) {
+            alert('กรุณาเลือกวันเกิดของคุณก่อน');
+            return;
+        }
+
+        const date = new Date(birthdate);
+        // คำนวณเลขศาสตร์จากวันเกิด (ผลรวมของวัน-เดือน-ปีเกิด)
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear();
+
+        const sum = (day + '' + month + '' + year).split('').map(Number).reduce((a, b) => a + b, 0);
+        
+        // ลดทอนผลรวมให้เหลือเลขตัวเดียว
+        let finalNumber = sum;
+        while (finalNumber > 9) {
+            finalNumber = finalNumber.toString().split('').map(Number).reduce((a, b) => a + b, 0);
+        }
+
+        // แสดงผลลัพธ์
+        const prediction = predictions[finalNumber];
+        if (prediction) {
+            resultTitle.innerText = prediction.title;
+            resultText.innerText = prediction.text;
+            luckyNumber.innerText = prediction.luckyNumber;
+            resultArea.style.display = 'block';
+        } else {
+            resultTitle.innerText = 'ไม่พบข้อมูล';
+            resultText.innerText = 'ไม่สามารถคำนวณคำทำนายได้ กรุณาลองใหม่อีกครั้ง';
+            luckyNumber.innerText = ' - ';
+            resultArea.style.display = 'block';
+        }
+    });
+
+  </script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</body>
+</html>

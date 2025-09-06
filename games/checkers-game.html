@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกมหมากฮอส</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: #f9f9f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            text-align: center;
+            flex-direction: column;
+            color: #333;
+        }
+        .game-area {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 500px;
+        }
+        h1 {
+            color: #004d99;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+        #board {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-gap: 0;
+            width: 100%;
+            max-width: 400px;
+            margin: 20px auto;
+            aspect-ratio: 1 / 1;
+            border: 2px solid #333;
+        }
+        .square {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .square.dark {
+            background-color: #a35f2a;
+        }
+        .square.light {
+            background-color: #eee;
+        }
+        .piece {
+            width: 80%;
+            height: 80%;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #555;
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+        .piece.red {
+            background-color: #d90000;
+        }
+        .piece.black {
+            background-color: #333;
+        }
+        .piece.king {
+            border: 4px solid gold;
+        }
+        .piece.selected {
+            box-shadow: 0 0 10px 5px lime;
+        }
+        #message {
+            margin-top: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+            min-height: 30px;
+        }
+        .reset-button {
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #d90000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        #mode-selection {
+            margin-bottom: 10px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        #mode-selection button {
+            padding: 10px 15px;
+            font-size: 1em;
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #mode-selection button:hover {
+            background-color: #004d99;
+        }
+        #mode-selection button.selected {
+            background-color: #004d99;
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-area">
+    <h1>เกมหมากฮอส</h1>
+    <div id="mode-selection">
+        <button id="player-vs-player">เล่นกับเพื่อน</button>
+        <button id="player-vs-bot">เล่นกับบอท</button>
+    </div>
+    <div id="board"></div>
+    <p id="message"></p>
+    <button id="reset-button" class="reset-button" style="display: none;">เล่นใหม่</button>
+</div>
+
+<script>
+    const boardElement = document.getElementById('board');
+    const messageElement = document.getElementById('message');
+    const resetButton = document.getElementById('reset-button');
+    const modeSelection = document.getElementById('mode-selection');
+    
+    let board = [];
+    let currentPlayer = 'red';
+    let selectedPiece = null;
+    let mustJump = false;
+    let gameMode = null; // 'player' or 'bot'
+
+    function createBoard() {
+        board = [];
+        boardElement.innerHTML = '';
+        for (let i = 0; i < 8; i++) {
+            board[i] = [];
+            for (let j = 0; j < 8; j++) {
+                const square = document.createElement('div');
+                square.className = `square ${(i + j) % 2 === 0 ? 'light' : 'dark'}`;
+                square.dataset.row = i;
+                square.dataset.col = j;
+                square.addEventListener('click', handleSquareClick);
+                boardElement.appendChild(square);
+                
+                if ((i + j) % 2 !== 0) {
+                    if (i < 3) {
+                        board[i][j] = { color: 'black', isKing: false };
+                        addPiece(square, 'black');
+                    } else if (i > 4) {
+                        board[i][j] = { color: 'red', isKing: false };
+                        addPiece(square, 'red');
+                    } else {
+                        board[i][j] = null;
+                    }
+                } else {
+                    board[i][j] = null;
+                }
+            }
+        }
+        updateMessage();
+    }
+    
+    function addPiece(square, color, isKing = false) {
+        const piece = document.createElement('div');
+        piece.className = `piece ${color} ${isKing ? 'king' : ''}`;
+        square.appendChild(piece);
+    }
+    
+    function handleSquareClick(event) {
+        if (!gameMode) return;
+        if (gameMode === 'bot' && currentPlayer === 'black') return;
+        
+        const squareElement = event.target.closest('.square');
+        if (!squareElement) return;
+
+        const row = parseInt(squareElement.dataset.row);
+        const col = parseInt(squareElement.dataset.col);
+        
+        if (selectedPiece) {
+            if (isValidMove(selectedPiece, { row, col })) {
+                movePiece(selectedPiece, { row, col });
+            } else {
+                unselectPiece();
+                updateMessage('การเดินไม่ถูกต้อง');
+            }
+        } else {
+            const pieceElement = squareElement.querySelector('.piece');
+            const pieceData = board[row][col];
+            if (pieceElement && pieceData && pieceData.color === currentPlayer) {
+                selectPiece({ row, col });
+            }
+        }
+    }
+    
+    function selectPiece(position) {
+        unselectPiece();
+        selectedPiece = position;
+        const square = boardElement.querySelector(`[data-row="${position.row}"][data-col="${position.col}"]`);
+        if (square && square.firstChild) {
+            square.firstChild.classList.add('selected');
+        }
+        updateMessage(`เลือกหมากที่แถว ${position.row}, หลัก ${position.col}`);
+    }
+    
+    function unselectPiece() {
+        if (selectedPiece) {
+            const square = boardElement.querySelector(`[data-row="${selectedPiece.row}"][data-col="${selectedPiece.col}"]`);
+            if (square && square.firstChild) {
+                square.firstChild.classList.remove('selected');
+            }
+            selectedPiece = null;
+        }
+    }
+    
+    function isValidMove(from, to) {
+        if (board[to.row][to.col] !== null) return false;
+
+        const rowDiff = to.row - from.row;
+        const colDiff = to.col - from.col;
+        const piece = board[from.row][from.col];
+
+        if (!piece) return false;
+
+        const isKing = piece.isKing;
+        
+        if (!isKing) {
+            if ((piece.color === 'red' && rowDiff > 0) || (piece.color === 'black' && rowDiff < 0)) return false;
+        }
+
+        // Check for normal move (1 square diagonal)
+        if (Math.abs(rowDiff) === 1 && Math.abs(colDiff) === 1) {
+            return !mustJump;
+        }
+
+        // Check for jump move (2 squares diagonal)
+        if (Math.abs(rowDiff) === 2 && Math.abs(colDiff) === 2) {
+            const jumpedRow = from.row + (rowDiff > 0 ? 1 : -1);
+            const jumpedCol = from.col + (colDiff > 0 ? 1 : -1);
+            const jumpedPiece = board[jumpedRow][jumpedCol];
+            return jumpedPiece && jumpedPiece.color !== currentPlayer;
+        }
+
+        // Check for king's long move
+        if (isKing && Math.abs(rowDiff) === Math.abs(colDiff)) {
+            const rowStep = rowDiff > 0 ? 1 : -1;
+            const colStep = colDiff > 0 ? 1 : -1;
+            
+            let currentRow = from.row + rowStep;
+            let currentCol = from.col + colStep;
+            
+            while (currentRow !== to.row) {
+                if (board[currentRow][currentCol]) {
+                    return false; // Path is blocked
+                }
+                currentRow += rowStep;
+                currentCol += colStep;
+            }
+            return !mustJump;
+        }
+
+        // Check for king's long jump
+        if (isKing && Math.abs(rowDiff) === Math.abs(colDiff)) {
+            const rowStep = rowDiff > 0 ? 1 : -1;
+            const colStep = colDiff > 0 ? 1 : -1;
+            let jumpedCount = 0;
+            let currentRow = from.row + rowStep;
+            let currentCol = from.col + colStep;
+
+            while (currentRow !== to.row) {
+                if (board[currentRow][currentCol]) {
+                    if (board[currentRow][currentCol].color !== currentPlayer) {
+                        jumpedCount++;
+                    } else {
+                        return false; // Blocked by own piece
+                    }
+                }
+                currentRow += rowStep;
+                currentCol += colStep;
+            }
+            return jumpedCount === 1;
+        }
+        
+        return false;
+    }
+
+    function movePiece(from, to) {
+        const rowDiff = to.row - from.row;
+        const colDiff = to.col - from.col;
+        const piece = board[from.row][from.col];
+        
+        // Update board state
+        board[from.row][from.col] = null;
+        const becomesKing = piece.isKing || (currentPlayer === 'red' && to.row === 0) || (currentPlayer === 'black' && to.row === 7);
+        board[to.row][to.col] = { color: currentPlayer, isKing: becomesKing };
+        
+        // Update DOM
+        const fromSquare = boardElement.querySelector(`[data-row="${from.row}"][data-col="${from.col}"]`);
+        const toSquare = boardElement.querySelector(`[data-row="${to.row}"][data-col="${to.col}"]`);
+        const pieceElement = fromSquare.firstChild;
+        toSquare.appendChild(pieceElement);
+        pieceElement.className = `piece ${currentPlayer} ${becomesKing ? 'king' : ''} ${pieceElement.classList.contains('selected') ? 'selected' : ''}`;
+
+        // Handle jumped pieces
+        if (Math.abs(rowDiff) > 1 && Math.abs(colDiff) > 1) {
+            const rowStep = rowDiff > 0 ? 1 : -1;
+            const colStep = colDiff > 0 ? 1 : -1;
+            let currentRow = from.row + rowStep;
+            let currentCol = from.col + colStep;
+
+            while (currentRow !== to.row) {
+                if (board[currentRow][currentCol] && board[currentRow][currentCol].color !== currentPlayer) {
+                    board[currentRow][currentCol] = null;
+                    const jumpedSquare = boardElement.querySelector(`[data-row="${currentRow}"][data-col="${currentCol}"]`);
+                    if (jumpedSquare && jumpedSquare.firstChild) jumpedSquare.firstChild.remove();
+                    break;
+                }
+                currentRow += rowStep;
+                currentCol += colStep;
+            }
+
+            checkWin();
+
+            if (checkForMultiJump(to)) {
+                selectedPiece = to;
+                mustJump = true;
+                updateMessage('กระโดดต่อ!');
+                if (gameMode === 'bot' && currentPlayer === 'black') {
+                    setTimeout(botTurn, 1000);
+                }
+                return;
+            }
+        }
+        
+        unselectPiece();
+        switchPlayer();
+        checkWin();
+        mustJump = false;
+    }
+    
+    function checkForMultiJump(position) {
+        const piece = board[position.row][position.col];
+        if (!piece) return false;
+        
+        const isKing = piece.isKing;
+        const directions = [[1,1], [1,-1], [-1,1], [-1,-1]];
+        
+        for (const [rowDir, colDir] of directions) {
+            if (!isKing && ((currentPlayer === 'red' && rowDir > 0) || (currentPlayer === 'black' && rowDir < 0))) {
+                continue;
+            }
+            
+            // Single jump check
+            const jumpedRow = position.row + rowDir;
+            const jumpedCol = position.col + colDir;
+            const targetRow = position.row + 2 * rowDir;
+            const targetCol = position.col + 2 * colDir;
+            
+            if (targetRow >= 0 && targetRow < 8 && targetCol >= 0 && targetCol < 8) {
+                const jumpedPiece = board[jumpedRow][jumpedCol];
+                if (board[targetRow][targetCol] === null && jumpedPiece && jumpedPiece.color !== currentPlayer) {
+                    return true;
+                }
+            }
+
+            // King's long jump check
+            if (isKing) {
+                for (let dist = 1; dist < 7; dist++) {
+                    const nextJumpedRow = position.row + dist * rowDir;
+                    const nextJumpedCol = position.col + dist * colDir;
+                    const nextTargetRow = position.row + (dist + 1) * rowDir;
+                    const nextTargetCol = position.col + (dist + 1) * colDir;
+                    
+                    if (nextTargetRow >= 0 && nextTargetRow < 8 && nextTargetCol >= 0 && nextTargetCol < 8) {
+                        const jumpedPiece = board[nextJumpedRow][nextJumpedCol];
+                        if (board[nextTargetRow][nextTargetCol] === null && jumpedPiece && jumpedPiece.color !== currentPlayer) {
+                            let clearPath = true;
+                            let checkRow = position.row + rowDir;
+                            let checkCol = position.col + colDir;
+                            while (checkRow !== nextJumpedRow) {
+                                if (board[checkRow][checkCol]) {
+                                    clearPath = false;
+                                    break;
+                                }
+                                checkRow += rowDir;
+                                checkCol += colDir;
+                            }
+                            if (clearPath) return true;
+                        } else if (board[nextJumpedRow][nextJumpedCol]) {
+                            break;
+                        }
+                    } else {
+                        break;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    
+    function switchPlayer() {
+        currentPlayer = currentPlayer === 'red' ? 'black' : 'red';
+        updateMessage();
+        if (gameMode === 'bot' && currentPlayer === 'black') {
+            setTimeout(botTurn, 1000);
+        }
+    }
+    
+    function botTurn() {
+        const possibleJumps = findPossibleJumps('black');
+        if (possibleJumps.length > 0) {
+            const jump = possibleJumps.sort((a, b) => Math.random() - 0.5)[0];
+            selectPiece(jump.from);
+            movePiece(jump.from, jump.to);
+        } else {
+            const possibleMoves = findPossibleMoves('black');
+            if (possibleMoves.length > 0) {
+                const move = possibleMoves.sort((a, b) => Math.random() - 0.5)[0];
+                selectPiece(move.from);
+                movePiece(move.from, move.to);
+            } else {
+                checkWin();
+            }
+        }
+    }
+    
+    function findPossibleJumps(playerColor) {
+        const jumps = [];
+        for (let r = 0; r < 8; r++) {
+            for (let c = 0; c < 8; c++) {
+                const piece = board[r][c];
+                if (piece && piece.color === playerColor) {
+                    const directions = [[1,1], [1,-1], [-1,1], [-1,-1]];
+                    for (const [rowDir, colDir] of directions) {
+                        if (!piece.isKing && ((playerColor === 'red' && rowDir > 0) || (playerColor === 'black' && rowDir < 0))) {
+                            continue;
+                        }
+                        
+                        // Single jump check
+                        const jumpedRow = r + rowDir;
+                        const jumpedCol = c + colDir;
+                        const targetRow = r + 2 * rowDir;
+                        const targetCol = c + 2 * colDir;
+                        
+                        if (targetRow >= 0 && targetRow < 8 && targetCol >= 0 && targetCol < 8) {
+                            const jumpedPiece = board[jumpedRow][jumpedCol];
+                            if (board[targetRow][targetCol] === null && jumpedPiece && jumpedPiece.color !== playerColor) {
+                                jumps.push({ from: { row: r, col: c }, to: { row: targetRow, col: targetCol } });
+                            }
+                        }
+
+                        // King's long jump check
+                        if (piece.isKing) {
+                            for (let dist = 1; dist < 7; dist++) {
+                                const nextJumpedRow = r + dist * rowDir;
+                                const nextJumpedCol = c + dist * colDir;
+                                const nextTargetRow = r + (dist + 1) * rowDir;
+                                const nextTargetCol = c + (dist + 1) * colDir;
+                                
+                                if (nextTargetRow >= 0 && nextTargetRow < 8 && nextTargetCol >= 0 && nextTargetCol < 8) {
+                                    const jumpedPiece = board[nextJumpedRow][nextJumpedCol];
+                                    if (board[nextTargetRow][nextTargetCol] === null && jumpedPiece && jumpedPiece.color !== playerColor) {
+                                        let clearPath = true;
+                                        let checkRow = r + rowDir;
+                                        let checkCol = c + colDir;
+                                        while (checkRow !== nextJumpedRow) {
+                                            if (board[checkRow][checkCol]) {
+                                                clearPath = false;
+                                                break;
+                                            }
+                                            checkRow += rowDir;
+                                            checkCol += colDir;
+                                        }
+                                        if (clearPath) {
+                                            jumps.push({ from: { row: r, col: c }, to: { row: nextTargetRow, col: nextTargetCol } });
+                                        }
+                                    } else if (board[nextJumpedRow][nextJumpedCol]) {
+                                        break;
+                                    }
+                                } else {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return jumps;
+    }
+    
+    function findPossibleMoves(playerColor) {
+        const moves = [];
+        for (let r = 0; r < 8; r++) {
+            for (let c = 0; c < 8; c++) {
+                const piece = board[r][c];
+                if (piece && piece.color === playerColor) {
+                    const directions = [[1,1], [1,-1], [-1,1], [-1,-1]];
+                    for (const [rowDir, colDir] of directions) {
+                         if (!piece.isKing && ((playerColor === 'red' && rowDir > 0) || (playerColor === 'black' && rowDir < 0))) {
+                            continue;
+                        }
+
+                        // Normal move check
+                        const targetRow = r + rowDir;
+                        const targetCol = c + colDir;
+                        if (targetRow >= 0 && targetRow < 8 && targetCol >= 0 && targetCol < 8 && board[targetRow][targetCol] === null) {
+                            moves.push({ from: { row: r, col: c }, to: { row: targetRow, col: targetCol } });
+                        }
+                        
+                        // King's long move check
+                        if (piece.isKing) {
+                            for (let dist = 2; dist < 8; dist++) {
+                                const nextTargetRow = r + dist * rowDir;
+                                const nextTargetCol = c + dist * colDir;
+                                if (nextTargetRow >= 0 && nextTargetRow < 8 && nextTargetCol >= 0 && nextTargetCol < 8 && board[nextTargetRow][nextTargetCol] === null) {
+                                    moves.push({ from: { row: r, col: c }, to: { row: nextTargetRow, col: nextTargetCol } });
+                                } else {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return moves;
+    }
+    
+    function updateMessage(msg = '') {
+        if (msg) {
+            messageElement.textContent = msg;
+        } else {
+            messageElement.textContent = `ตา Player ${currentPlayer === 'red' ? '1 (สีแดง)' : '2 (สีดำ)'}`;
+        }
+    }
+    
+    function checkWin() {
+        let redPieces = 0;
+        let blackPieces = 0;
+        for (let i = 0; i < 8; i++) {
+            for (let j = 0; j < 8; j++) {
+                if (board[i][j] && board[i][j].color === 'red') redPieces++;
+                if (board[i][j] && board[i][j].color === 'black') blackPieces++;
+            }
+        }
+        
+        if (redPieces === 0) {
+            messageElement.textContent = `Player 2 (${gameMode === 'bot' ? 'บอท' : 'สีดำ'}) ชนะ!`;
+            endGame();
+        } else if (blackPieces === 0) {
+            messageElement.textContent = "Player 1 (สีแดง) ชนะ!";
+            endGame();
+        }
+    }
+    
+    function endGame() {
+        unselectPiece();
+        const squares = boardElement.querySelectorAll('.square');
+        squares.forEach(square => square.removeEventListener('click', handleSquareClick));
+        resetButton.style.display = 'block';
+    }
+    
+    function resetGame() {
+        gameMode = null;
+        modeSelection.style.display = 'flex';
+        resetButton.style.display = 'none';
+        messageElement.textContent = 'เลือกว่าจะเล่นกับใคร';
+        board = [];
+        boardElement.innerHTML = '';
+        currentPlayer = 'red';
+        selectedPiece = null;
+        mustJump = false;
+        
+        const squares = boardElement.querySelectorAll('.square');
+        squares.forEach(square => square.removeEventListener('click', handleSquareClick));
+    }
+    
+    document.getElementById('player-vs-player').addEventListener('click', () => {
+        gameMode = 'player';
+        modeSelection.style.display = 'none';
+        createBoard();
+    });
+
+    document.getElementById('player-vs-bot').addEventListener('click', () => {
+        gameMode = 'bot';
+        modeSelection.style.display = 'none';
+        createBoard();
+    });
+
+    resetButton.addEventListener('click', resetGame);
+    
+    // Initial setup
+    resetGame();
+</script>
+
+</body>
+</html>

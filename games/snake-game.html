@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกมงู (Snake Game)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: #f9f9f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            text-align: center;
+            flex-direction: column;
+            color: #333;
+        }
+        .game-area {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 500px;
+        }
+        h1 {
+            color: #004d99;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+        canvas {
+            background: #eee;
+            border: 2px solid #333;
+        }
+        .controls {
+            margin-top: 10px;
+            font-size: 1.2em;
+        }
+        #score-display {
+            font-weight: bold;
+            color: #d90000;
+        }
+        .instructions {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-area">
+    <h1>เกมงู (Snake Game)</h1>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <div class="controls">
+        คะแนน: <span id="score-display">0</span>
+    </div>
+    <div class="instructions">
+        ใช้ปุ่มลูกศรบนคีย์บอร์ดเพื่อควบคุมงู
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const scoreDisplay = document.getElementById('score-display');
+    const gridSize = 20;
+    let snake = [{ x: 10, y: 10 }];
+    let food = {};
+    let direction = 'right';
+    let score = 0;
+    let gameInterval;
+    
+    function generateFood() {
+        food = {
+            x: Math.floor(Math.random() * (canvas.width / gridSize)),
+            y: Math.floor(Math.random() * (canvas.height / gridSize))
+        };
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.fillStyle = '#004d99';
+        snake.forEach(segment => {
+            ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize, gridSize);
+        });
+        
+        ctx.fillStyle = '#d90000';
+        ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
+    }
+
+    function update() {
+        const head = { x: snake[0].x, y: snake[0].y };
+        
+        switch (direction) {
+            case 'up':
+                head.y--;
+                break;
+            case 'down':
+                head.y++;
+                break;
+            case 'left':
+                head.x--;
+                break;
+            case 'right':
+                head.x++;
+                break;
+        }
+        
+        if (head.x === food.x && head.y === food.y) {
+            score++;
+            scoreDisplay.textContent = score;
+            generateFood();
+        } else {
+            snake.pop();
+        }
+        
+        snake.unshift(head);
+        
+        if (checkCollision()) {
+            clearInterval(gameInterval);
+            alert(`เกมจบ! คะแนนของคุณคือ ${score}`);
+            document.location.reload();
+        }
+        
+        draw();
+    }
+
+    function checkCollision() {
+        const head = snake[0];
+        
+        if (head.x < 0 || head.x >= canvas.width / gridSize || head.y < 0 || head.y >= canvas.height / gridSize) {
+            return true;
+        }
+        
+        for (let i = 1; i < snake.length; i++) {
+            if (head.x === snake[i].x && head.y === snake[i].y) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    document.addEventListener('keydown', e => {
+        const key = e.key;
+        let newDirection;
+        
+        if (key === 'ArrowUp' && direction !== 'down') newDirection = 'up';
+        if (key === 'ArrowDown' && direction !== 'up') newDirection = 'down';
+        if (key === 'ArrowLeft' && direction !== 'right') newDirection = 'left';
+        if (key === 'ArrowRight' && direction !== 'left') newDirection = 'right';
+        
+        if (newDirection) {
+            direction = newDirection;
+        }
+    });
+
+    function startGame() {
+        snake = [{ x: 10, y: 10 }];
+        direction = 'right';
+        score = 0;
+        scoreDisplay.textContent = score;
+        generateFood();
+        draw();
+        clearInterval(gameInterval);
+        gameInterval = setInterval(update, 100);
+    }
+    
+    startGame();
+</script>
+
+</body>
+</html>

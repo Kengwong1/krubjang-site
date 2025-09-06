@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ตลาดซื้อขายออนไลน์ - ครบจังดอทคอม</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS ที่ใช้ร่วมกับหน้าอื่นๆ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Kanit', sans-serif;
+        }
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+        }
+        .header-container {
+            background-color: #004d99;
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header-container h1 {
+            font-size: 2.5em;
+            margin-bottom: 5px;
+        }
+        .header-container p {
+            font-size: 1.2em;
+        }
+        .main-nav {
+            background-color: white;
+            padding: 10px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .main-nav a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            padding: 12px 20px;
+            border-radius: 8px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .main-nav a:hover, .main-nav a.active {
+            background-color: #0066cc;
+            color: white;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        .section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+        .section h2 {
+            margin-bottom: 20px;
+            color: #d90000;
+            font-size: 1.8em;
+            border-bottom: 3px solid #d90000;
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+        .footer {
+            background-color: #222;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        /* สไตล์เฉพาะหน้านี้ */
+        .marketplace-header {
+            background-color: #004085;
+            color: white;
+            padding: 16px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        #userStatus button {
+            background: #d6336c;
+            border: none;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+        .category-nav {
+            background: white;
+            display: flex;
+            gap: 10px;
+            padding: 10px 20px;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .category-nav button.tab-button {
+            background: none;
+            border: 2px solid transparent;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 700;
+            color: #004085;
+            cursor: pointer;
+            transition: background 0.3s, color 0.3s, border-color 0.3s;
+        }
+        .category-nav button.tab-button.active,
+        .category-nav button.tab-button:hover {
+            background: #004085;
+            color: white;
+            border-color: #004085;
+        }
+        .post-link {
+            margin-left: auto;
+            color: #004085;
+            font-weight: 700;
+            text-decoration: underline;
+            align-self: center;
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+            overflow: hidden;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .product-card:hover, .product-card:focus {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            outline: none;
+        }
+        .product-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-bottom: 3px solid #004085;
+        }
+        .product-info {
+            padding: 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .product-title {
+            font-weight: 700;
+            color: #00274d;
+            margin: 0 0 8px 0;
+        }
+        .product-desc {
+            flex-grow: 1;
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 12px;
+        }
+        .product-price {
+            font-weight: 900;
+            color: #d6336c;
+            font-size: 1.2rem;
+            text-align: right;
+            user-select: none;
+        }
+        .ads {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header-container">
+        <h1>ครบจังดอทคอม</h1>
+        <p>ข่าว เกม บันเทิง ไอที ไลฟ์สไตล์ ครบจบในเว็บเดียว</p>
+    </header>
+    <nav class="main-nav">
+        <a href="index.html">หน้าแรก</a>
+        <a href="news.html">ข่าว</a>
+        <a href="lotto.html">ตรวจหวย</a>
+        <a href="horoscope.html">ดูดวง</a>
+        <a href="sport.html">กีฬา</a>
+        <a href="video.html">วีดีโอ</a>
+        <a href="games.html">เกมส์</a>
+        <a href="marketplace.html" class="active">ซื้อ-ขาย</a>
+        <a href="booking.html">จองออนไลน์</a>
+        <a href="contact.html">ติดต่อเรา</a>
+    </nav>
+
+    <div class="container">
+        <div class="ads">
+        </div>
+        
+        <header class="marketplace-header">
+            <div>ตลาดซื้อขายออนไลน์</div>
+            <div id="userStatus" aria-live="polite"></div>
+        </header>
+        
+        <nav class="category-nav" aria-label="หมวดหมู่สินค้า">
+            <button class="tab-button" data-category="บ้าน">บ้าน</button>
+            <button class="tab-button" data-category="รถ">รถ</button>
+            <button class="tab-button" data-category="ที่ดิน">ที่ดิน</button>
+            <button class="tab-button" data-category="เสื้อผ้า">เสื้อผ้า</button>
+            <button class="tab-button" data-category="เครื่องประดับ">เครื่องประดับ</button>
+            <button class="tab-button" data-category="เครื่องใช้ไฟฟ้า">เครื่องใช้ไฟฟ้า</button>
+            <button class="tab-button" data-category="อื่นๆ">อื่นๆ</button>
+            <a href="post-product.html" class="post-link">ลงประกาศขายสินค้า</a>
+        </nav>
+        
+        <main style="margin-top: 20px;">
+            <div id="productsArea" class="section">
+                <p style="color:#666; text-align:center;">เลือกหมวดหมู่ด้านบนเพื่อดูสินค้า</p>
+            </div>
+        </main>
+
+        <div class="ads">
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>© 2025 ครบจังดอทคอม | <a href="#" style="color:white; text-decoration: underline;">นโยบายความเป็นส่วนตัว</a></p>
+    </footer>
+
+    <script>
+        const userStatusDiv = document.getElementById('userStatus');
+        const tabButtons = document.querySelectorAll('.category-nav .tab-button');
+        const productsArea = document.getElementById('productsArea');
+    
+        function updateUserStatus() {
+            const user = localStorage.getItem('loggedInUser');
+            if (user) {
+                userStatusDiv.innerHTML = `สวัสดี, ${user} <button id="logoutBtn">ออกจากระบบ</button>`;
+                document.getElementById('logoutBtn').addEventListener('click', () => {
+                    if (confirm('แน่ใจจะออกจากระบบ?')) {
+                        localStorage.removeItem('loggedInUser');
+                        alert('ออกจากระบบเรียบร้อยแล้ว');
+                        window.location.reload();
+                    }
+                });
+            } else {
+                userStatusDiv.innerHTML = `<a href="login.html" style="color:#fff;">เข้าสู่ระบบ</a>`;
+            }
+        }
+    
+        function showProducts(category) {
+            const allPosts = JSON.parse(localStorage.getItem('salePosts')) || [];
+            const filtered = allPosts.filter(p => p.category === category);
+    
+            productsArea.innerHTML = '';
+            const grid = document.createElement('div');
+            grid.className = 'product-grid';
+    
+            if (filtered.length === 0) {
+                productsArea.innerHTML = `<p style="text-align:center; color:#666; font-style: italic;">ยังไม่มีสินค้าที่หมวด "${category}"</p>`;
+                return;
+            }
+    
+            filtered.forEach(post => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.tabIndex = 0;
+    
+                const img = document.createElement('img');
+                img.src = post.image || 'https://via.placeholder.com/400x280?text=ไม่มีรูปภาพ';
+                img.alt = `รูปสินค้าของ ${post.title}`;
+                card.appendChild(img);
+    
+                const info = document.createElement('div');
+                info.className = 'product-info';
+    
+                const title = document.createElement('h3');
+                title.className = 'product-title';
+                title.textContent = post.title;
+                info.appendChild(title);
+    
+                const desc = document.createElement('p');
+                desc.className = 'product-desc';
+                desc.textContent = post.description;
+                info.appendChild(desc);
+    
+                const price = document.createElement('div');
+                price.className = 'product-price';
+                price.textContent = `${post.price.toLocaleString()} บาท`;
+                info.appendChild(price);
+    
+                card.appendChild(info);
+    
+                card.addEventListener('click', () => {
+                    sessionStorage.setItem('selectedProduct', JSON.stringify(post));
+                    window.location.href = 'product-detail.html';
+                });
+    
+                grid.appendChild(card);
+            });
+    
+            productsArea.appendChild(grid);
+        }
+    
+        tabButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const selectedCategory = btn.getAttribute('data-category');
+                showProducts(selectedCategory);
+            });
+        });
+    
+        updateUserStatus();
+
+        // โค้ดสำหรับให้เมนู Active อัตโนมัติ (เมนูหลัก)
+        document.addEventListener("DOMContentLoaded", function () {
+            const currentPage = window.location.pathname.split("/").pop();
+            const mainNavLinks = document.querySelectorAll(".main-nav a");
+
+            mainNavLinks.forEach(link => {
+                const linkPage = link.getAttribute("href");
+                if (linkPage === currentPage || (currentPage === "" && linkPage === "index.html")) {
+                    link.classList.add("active");
+                } else {
+                    link.classList.remove("active");
+                }
+            });
+        });
+    </script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<title>รายละเอียดสินค้า</title>
+<style>
+  body { font-family: 'Kanit', sans-serif; background: #f5f7fa; margin: 0; padding: 30px; }
+  .container { max-width: 600px; margin: auto; background: white; padding: 24px; border-radius: 15px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+  h1 { color: #004085; margin-bottom: 20px; }
+  img { width: 100%; height: 300px; object-fit: cover; border-radius: 12px; margin-bottom: 20px; }
+  .price { font-weight: 900; font-size: 1.5rem; color: #d6336c; margin-bottom: 20px; text-align: right; }
+  .description, .contact-info { font-size: 1rem; color: #333; margin-bottom: 20px; white-space: pre-wrap; }
+  button {
+    background: #004085; color: white; border: none; padding: 14px 28px;
+    font-size: 1.1rem; font-weight: 700; border-radius: 30px; cursor: pointer; margin-bottom: 20px;
+  }
+  button:hover { background: #00274d; }
+  nav { margin-bottom: 20px; }
+  nav a {
+    color: #004085; font-weight: 700; text-decoration: none;
+    border: 2px solid #004085; padding: 8px 16px; border-radius: 30px;
+    transition: background-color 0.3s;
+  }
+  nav a:hover { background-color: #004085; color: white; }
+
+  #orderFormContainer {
+    display: none;
+    background: #e9f0fb; padding: 20px; border-radius: 12px;
+  }
+  #orderForm label { display: block; margin-bottom: 8px; font-weight: 600; }
+  #orderForm input, #orderForm textarea {
+    width: 100%; padding: 8px 12px; margin-bottom: 16px;
+    border: 2px solid #004085; border-radius: 8px; font-size: 1rem; box-sizing: border-box; resize: vertical;
+  }
+  #orderForm button {
+    width: 100%; background-color: #d6336c;
+  }
+  #orderForm button:hover {
+    background-color: #9a2348;
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="marketplace.html">← กลับสู่หน้าตลาดสินค้า</a>
+</nav>
+
+<div class="container" id="productDetail"></div>
+
+<div class="container" id="orderFormContainer">
+  <h2>กรอกข้อมูลสำหรับสั่งซื้อสินค้า</h2>
+  <form id="orderForm" aria-label="ฟอร์มคำสั่งซื้อสินค้า">
+    <label for="buyerName">ชื่อผู้สั่งซื้อ</label>
+    <input type="text" id="buyerName" name="buyerName" required placeholder="ชื่อของคุณ" />
+
+    <label for="buyerPhone">เบอร์ติดต่อ</label>
+    <input type="tel" id="buyerPhone" name="buyerPhone" required placeholder="หมายเลขโทรศัพท์" />
+
+    <label for="buyerAddress">ที่อยู่จัดส่ง</label>
+    <textarea id="buyerAddress" name="buyerAddress" rows="3" required placeholder="ที่อยู่จัดส่งสินค้า"></textarea>
+
+    <button type="submit">ส่งคำสั่งซื้อ</button>
+  </form>
+</div>
+
+<script>
+  const productDetailDiv = document.getElementById('productDetail');
+  const orderFormContainer = document.getElementById('orderFormContainer');
+  const productData = sessionStorage.getItem('selectedProduct');
+
+  if (!productData) {
+    productDetailDiv.innerHTML = '<p style="color:#666; text-align:center;">ไม่พบข้อมูลสินค้า กรุณากลับไปเลือกสินค้าใหม่</p>';
+  } else {
+    const product = JSON.parse(productData);
+
+    productDetailDiv.innerHTML = `
+      <h1>${product.title}</h1>
+      <img src="${product.image || 'https://via.placeholder.com/600x400?text=ไม่มีรูปภาพ'}" alt="รูปสินค้าของ ${product.title}" />
+      <div class="price">${product.price.toLocaleString()} บาท</div>
+      <div class="description">${product.description}</div>
+      <div class="contact-info"><strong>ข้อมูลติดต่อผู้ขาย:</strong><br />${product.contact || 'ไม่ได้ระบุข้อมูลติดต่อ'}</div>
+      <button id="orderBtn">สั่งซื้อสินค้า</button>
+    `;
+
+    document.getElementById('orderBtn').addEventListener('click', () => {
+      orderFormContainer.style.display = 'block';
+      orderFormContainer.scrollIntoView({behavior: 'smooth'});
+    });
+  }
+
+  document.getElementById('orderForm').addEventListener('submit', e => {
+    e.preventDefault();
+
+    const buyerName = document.getElementById('buyerName').value.trim();
+    const buyerPhone = document.getElementById('buyerPhone').value.trim();
+    const buyerAddress = document.getElementById('buyerAddress').value.trim();
+
+    if (!buyerName || !buyerPhone || !buyerAddress) {
+      alert('กรุณากรอกข้อมูลให้ครบถ้วนทุกช่อง');
+      return;
+    }
+
+    const product = JSON.parse(productData);
+    // เปลี่ยนเป็นอีเมลผู้ขาย หรือถ้าไม่มี กำหนดอีเมลของคุณเอง
+    const emailRecipient = product.contactEmail || 'ขายสินค้า@example.com';
+
+    const subject = encodeURIComponent(`คำสั่งซื้อสินค้า: ${product.title}`);
+    // เนื้อหาสั่งซื้อ
+    const body = encodeURIComponent(
+      `รายละเอียดสินค้า:\nชื่อสินค้า: ${product.title}\nราคา: ${product.price.toLocaleString()} บาท\n\n` +
+      `ข้อมูลผู้สั่งซื้อ:\nชื่อ: ${buyerName}\nเบอร์ติดต่อ: ${buyerPhone}\nที่อยู่จัดส่ง:\n${buyerAddress}\n\n` +
+      `โปรดติดต่อกลับเพื่อตกลงรายละเอียด`
+    );
+
+    // เปิด mail client
+    window.location.href = `mailto:${emailRecipient}?subject=${subject}&body=${body}`;
+
+    alert('ระบบจะเปิดโปรแกรมอีเมลของคุณเพื่อส่งคำสั่งซื้อ กรุณาตรวจสอบและกดส่งเมลอีกครั้ง');
+
+    e.target.reset();
+    orderFormContainer.style.display = 'none';
+  });
+</script>
+
+</body>
+</html>

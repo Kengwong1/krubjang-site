@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกมจับคู่สัตว์น่ารัก</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .game-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 95%;
+            max-width: 500px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        h1 {
+            color: #004d99;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            width: 100%;
+        }
+
+        .card {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 100%;
+            background-color: #d8e2eb;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5em;
+            cursor: pointer;
+            transition: transform 0.5s;
+            transform-style: preserve-3d;
+            box-sizing: border-box;
+        }
+        
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card.matched {
+            background-color: #a7f3d0;
+            cursor: default;
+        }
+        
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backface-visibility: hidden;
+            top: 0;
+            left: 0;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.1em;
+        }
+
+        #timer {
+            font-weight: bold;
+            color: #d90000;
+        }
+        
+        #score {
+            font-weight: bold;
+            color: #0066cc;
+        }
+
+        .reset-button {
+            background-color: #d90000;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            font-size: 0.9em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .reset-button:hover {
+            background-color: #b30000;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 400px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-content h2 {
+            color: #004d99;
+            margin-bottom: 10px;
+        }
+        
+        .modal-content p {
+            font-size: 1.1em;
+            margin-top: 10px;
+        }
+        
+        .modal-content button {
+            margin-top: 20px;
+        }
+        
+        #splash-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 5;
+            border-radius: 15px;
+        }
+        
+        #splash-screen button {
+            padding: 15px 30px;
+            font-size: 1.5em;
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        #splash-screen button:hover {
+            background-color: #004d99;
+        }
+
+        @media (max-width: 500px) {
+            .card {
+                font-size: 2em;
+            }
+            .controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <h1>เกมจับคู่สัตว์น่ารัก</h1>
+    <div class="controls">
+        <span id="score">คะแนน: 0</span>
+        <button class="reset-button" id="reset-button" style="display:none;">เริ่มใหม่</button>
+        <span id="timer">เวลา: 0</span>
+    </div>
+    <div class="game-grid" id="game-grid">
+        </div>
+    <div id="splash-screen">
+        <h3>เกมจับคู่สัตว์น่ารัก</h3>
+        <p style="margin: 10px 0;">ทดสอบความจำของคุณ!</p>
+        <button id="start-button">เริ่มเล่น</button>
+    </div>
+</div>
+
+<div id="win-modal" class="modal">
+    <div class="modal-content">
+        <h2>ยินดีด้วย!</h2>
+        <p id="win-message"></p>
+        <button class="reset-button" onclick="window.location.reload()">เล่นอีกครั้ง</button>
+    </div>
+</div>
+
+<script>
+    const animals = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼'];
+    let cards = [...animals, ...animals];
+    let firstCard = null;
+    let secondCard = null;
+    let lockBoard = false;
+    let matchedPairs = 0;
+    let score = 0;
+    let timer = 0;
+    let timerInterval = null;
+
+    const gameGrid = document.getElementById('game-grid');
+    const scoreElement = document.getElementById('score');
+    const timerElement = document.getElementById('timer');
+    const resetButton = document.getElementById('reset-button');
+    const splashScreen = document.getElementById('splash-screen');
+    const startButton = document.getElementById('start-button');
+    const winModal = document.getElementById('win-modal');
+    const winMessage = document.getElementById('win-message');
+    const gameContainer = document.querySelector('.game-container');
+
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    function createBoard() {
+        gameGrid.innerHTML = '';
+        shuffle(cards);
+        cards.forEach(animal => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <div class="card-front">?</div>
+                <div class="card-back">${animal}</div>
+            `;
+            card.addEventListener('click', flipCard);
+            gameGrid.appendChild(card);
+        });
+    }
+
+    function flipCard() {
+        if (lockBoard) return;
+        if (this === firstCard) return;
+
+        this.classList.add('flipped');
+        
+        if (!firstCard) {
+            firstCard = this;
+            return;
+        }
+        
+        secondCard = this;
+        lockBoard = true;
+        
+        checkForMatch();
+    }
+
+    function checkForMatch() {
+        const firstAnimal = firstCard.querySelector('.card-back').textContent;
+        const secondAnimal = secondCard.querySelector('.card-back').textContent;
+        
+        const isMatch = firstAnimal === secondAnimal;
+        
+        if (isMatch) {
+            matchedPairs++;
+            score += 100;
+            updateScore();
+            disableCards();
+        } else {
+            score = Math.max(0, score - 20); // ลบคะแนนหากไม่ตรง
+            updateScore();
+            unflipCards();
+        }
+        
+        if (matchedPairs === animals.length) {
+            setTimeout(() => {
+                clearInterval(timerInterval);
+                winMessage.textContent = `คุณทำคะแนนได้ ${score} แต้ม ในเวลา ${timer} วินาที!`;
+                winModal.style.display = 'flex';
+            }, 500);
+        }
+    }
+
+    function disableCards() {
+        firstCard.classList.add('matched');
+        secondCard.classList.add('matched');
+        firstCard.removeEventListener('click', flipCard);
+        secondCard.removeEventListener('click', flipCard);
+        resetBoard();
+    }
+
+    function unflipCards() {
+        setTimeout(() => {
+            firstCard.classList.remove('flipped');
+            secondCard.classList.remove('flipped');
+            resetBoard();
+        }, 1000);
+    }
+
+    function resetBoard() {
+        [firstCard, secondCard, lockBoard] = [null, null, false];
+    }
+    
+    function updateScore() {
+        scoreElement.textContent = `คะแนน: ${score}`;
+    }
+    
+    function startTimer() {
+        clearInterval(timerInterval);
+        timer = 0;
+        timerElement.textContent = `เวลา: ${timer}`;
+        timerInterval = setInterval(() => {
+            timer++;
+            timerElement.textContent = `เวลา: ${timer}`;
+        }, 1000);
+    }
+    
+    function initializeGame() {
+        firstCard = null;
+        secondCard = null;
+        lockBoard = false;
+        matchedPairs = 0;
+        score = 0;
+        updateScore();
+        winModal.style.display = 'none';
+        createBoard();
+        startTimer();
+        resetButton.style.display = 'block';
+        splashScreen.style.display = 'none';
+    }
+    
+    startButton.addEventListener('click', initializeGame);
+    resetButton.addEventListener('click', initializeGame);
+    
+</script>
+
+</body>
+</html>

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ทำนายเบอร์มงคล - ครบจังดอทคอม</title>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* CSS ที่ใช้ร่วมกับหน้าอื่นๆ */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Kanit', sans-serif;
+    }
+    body {
+      background-color: #f0f2f5;
+      color: #333;
+    }
+    .header-container {
+      background-color: #004d99;
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+    }
+    .header-container h1 {
+      font-size: 2.5em;
+      margin-bottom: 5px;
+    }
+    .header-container p {
+      font-size: 1.2em;
+    }
+    .main-nav {
+      background-color: white;
+      padding: 10px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .main-nav a {
+      text-decoration: none;
+      color: #333;
+      font-weight: bold;
+      padding: 12px 20px;
+      border-radius: 8px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .main-nav a:hover, .main-nav a.active {
+      background-color: #0066cc;
+      color: white;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+    .section {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      margin-bottom: 30px;
+    }
+    .section h2 {
+      margin-bottom: 20px;
+      color: #d90000;
+      font-size: 1.8em;
+      border-bottom: 3px solid #d90000;
+      padding-bottom: 10px;
+      display: inline-block;
+    }
+    .footer {
+      background-color: #222;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+    }
+    /* สไตล์เฉพาะหน้านี้ */
+    .phone-form-area {
+      text-align: center;
+      padding: 30px;
+    }
+    .phone-form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+    .phone-form label {
+      font-size: 1.1em;
+      font-weight: bold;
+    }
+    .phone-form input[type="tel"] {
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+      width: 250px;
+      text-align: center;
+    }
+    .phone-form button {
+      padding: 12px 25px;
+      font-size: 1.2em;
+      color: white;
+      background-color: #4CAF50;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+    .phone-form button:hover {
+      background-color: #45a049;
+      transform: translateY(-2px);
+    }
+    #result-area {
+      margin-top: 40px;
+      background-color: #f9f9f9;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    #result-area h3 {
+      font-size: 2em;
+      color: #4CAF50;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    #result-area p {
+      line-height: 1.8;
+      font-size: 1.1em;
+      color: #555;
+    }
+    #result-area h4 {
+        color: #004d99;
+        font-size: 1.2em;
+        margin-top: 15px;
+        margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+  <header class="header-container">
+    <h1>ครบจังดอทคอม</h1>
+    <p>ข่าว เกม บันเทิง ไอที ไลฟ์สไตล์ ครบจบในเว็บเดียว</p>
+  </header>
+ <nav class="main-nav">
+    <a href="index.html" class="active">หน้าแรก</a>
+    <a href="news.html">ข่าว</a>
+    <a href="lotto.html">ตรวจหวย</a>
+    <a href="horoscope.html">ดูดวง</a>
+    <a href="sport.html">กีฬา</a>
+    <a href="video.html">วีดีโอ</a>
+    <a href="games.html">เกมส์</a>
+    <a href="marketplace.html">ซื้อ-ขาย</a>
+    <a href="booking.html">จองออนไลน์</a>
+    <a href="contact.html">ติดต่อเรา</a>
+  </nav>
+  <div class="container">
+    <div class="ads">
+      </div>
+    <div class="section">
+      <div class="phone-form-area">
+        <h2>📱 ทำนายเบอร์มงคล</h2>
+        <p style="margin: 10px 0 20px; color: #777;">กรุณากรอกเบอร์โทรศัพท์ 10 หลัก (ไม่ต้องมีขีด)</p>
+        <div class="phone-form">
+          <label for="phoneNumber">เบอร์โทรศัพท์:</label>
+          <input type="tel" id="phoneNumber" pattern="[0-9]{10}" maxlength="10" placeholder="08xxxxxxxx">
+          <button id="predict-button">ดูคำทำนาย</button>
+        </div>
+      </div>
+      <div id="result-area" style="display: none;">
+        <h3 id="result-title"></h3>
+        <p id="result-text"></p>
+        <h4>เลขคู่เด่น: <span id="pair-numbers"></span></h4>
+      </div>
+    </div>
+    <div class="ads">
+      </div>
+  </div>
+  <footer class="footer">
+    <p>&copy; 2025 ครบจังดอทคอม | <a href="#" style="color:white; text-decoration: underline;">นโยบายความเป็นส่วนตัว</a></p>
+  </footer>
+  <script>
+    const predictions = {
+        '15': 'เลขคู่แห่งเสน่ห์และความมีโชค มีคนรักคนเมตตา',
+        '16': 'เลขคู่แห่งความสำเร็จในหน้าที่การงาน เป็นคนมีความรับผิดชอบ',
+        '19': 'เลขคู่แห่งความก้าวหน้าและการเดินทาง มีโอกาสได้ไปต่างประเทศ',
+        '24': 'เลขคู่แห่งความสุขและมิตรภาพ เป็นคนมีเสน่ห์ มีคนช่วยเหลือ',
+        '28': 'เลขคู่แห่งความมั่งคั่งและร่ำรวย เหมาะกับนักลงทุนหรือเจ้าของธุรกิจ',
+        '36': 'เลขคู่แห่งความรักและเมตตา มีเสน่ห์แรง มีความสุขในความรัก',
+        '39': 'เลขคู่แห่งความกล้าหาญและความสำเร็จ ชอบความท้าทาย',
+        '45': 'เลขคู่แห่งสติปัญญาและความสำเร็จ เป็นคนฉลาด รอบรู้',
+        '46': 'เลขคู่แห่งความสุขและความรุ่งเรืองด้านการเงิน มีการเงินคล่องตัว',
+        '55': 'เลขคู่แห่งสติปัญญาและเมตตา เหมาะกับนักวิชาการหรือครูบาอาจารย์',
+        '59': 'เลขคู่แห่งความก้าวหน้าและสิ่งศักดิ์สิทธิ์คุ้มครอง มีโอกาสได้ดีในชีวิต',
+        '63': 'เลขคู่แห่งความมีเสน่ห์และความรัก เป็นคนดึงดูดใจเพศตรงข้าม',
+        '65': 'เลขคู่แห่งความสุขและความสำเร็จในชีวิต มีความสุขุมรอบคอบ',
+        '78': 'เลขคู่แห่งอำนาจและอิทธิพล เหมาะกับคนเป็นผู้นำหรือเจ้าของกิจการ',
+        '89': 'เลขคู่แห่งอำนาจและบารมี มีพลังลึกลับ มีคนยำเกรง',
+        // สามารถเพิ่มเลขคู่มงคลอื่นๆ ได้ที่นี่
+        '11': 'เป็นคนที่มีความมุ่งมั่นสูง แต่บางครั้งก็ดื้อรั้นเกินไป',
+        '13': 'ระวังเรื่องอุบัติเหตุและอารมณ์ร้อน',
+        '44': 'เป็นคนพูดจาเก่ง มีวาทศิลป์ดี เหมาะกับงานเจรจา'
+        // และอื่นๆ
+    };
+
+    const phoneNumberInput = document.getElementById('phoneNumber');
+    const predictButton = document.getElementById('predict-button');
+    const resultArea = document.getElementById('result-area');
+    const resultTitle = document.getElementById('result-title');
+    const resultText = document.getElementById('result-text');
+    const pairNumbersSpan = document.getElementById('pair-numbers');
+
+    predictButton.addEventListener('click', () => {
+        const phoneNumber = phoneNumberInput.value;
+
+        if (!/^[0-9]{10}$/.test(phoneNumber)) {
+            alert('กรุณากรอกเบอร์โทรศัพท์ให้ครบ 10 หลัก (เฉพาะตัวเลข)');
+            return;
+        }
+
+        // คำนวณผลรวมเลขศาสตร์
+        const sum = phoneNumber.split('').map(Number).reduce((a, b) => a + b, 0);
+
+        // ลดทอนผลรวมให้เหลือเลขตัวเดียว
+        let finalNumber = sum;
+        while (finalNumber > 9) {
+            finalNumber = finalNumber.toString().split('').map(Number).reduce((a, b) => a + b, 0);
+        }
+
+        // วิเคราะห์เลขคู่ 2 ตัวสุดท้าย
+        const pairs = [];
+        for (let i = 0; i < phoneNumber.length - 1; i++) {
+            const pair = phoneNumber.substring(i, i + 2);
+            pairs.push(pair);
+        }
+
+        // สร้างคำทำนายจากเลขคู่
+        let predictionText = '';
+        const prominentPairs = [];
+        pairs.forEach(pair => {
+            if (predictions[pair]) {
+                predictionText += `คู่เลข ${pair}: ${predictions[pair]}. <br><br>`;
+                prominentPairs.push(pair);
+            }
+        });
+        
+        resultTitle.innerText = `คำทำนายสำหรับเบอร์ ${phoneNumber}`;
+        
+        if (predictionText === '') {
+            resultText.innerHTML = 'ไม่พบเลขคู่มงคลในเบอร์โทรศัพท์นี้ แต่เบอร์ของคุณก็มีความหมายที่ดีในด้านอื่น ๆ <br><br>ผลรวมเลขศาสตร์ของคุณคือ **' + sum + '**. คำทำนายจากผลรวม: การเงินดี มีโชคลาภเข้ามาไม่ขาดสาย';
+            pairNumbersSpan.innerText = 'ไม่พบเลขคู่เด่น';
+        } else {
+            resultText.innerHTML = predictionText + '<br>ผลรวมเลขศาสตร์ของคุณคือ **' + sum + '**. คำทำนายจากผลรวม: การเงินดี มีโชคลาภเข้ามาไม่ขาดสาย';
+            pairNumbersSpan.innerText = prominentPairs.join(', ');
+        }
+        
+        resultArea.style.display = 'block';
+    });
+
+  </script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</body>
+</html>

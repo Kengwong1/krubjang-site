@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ติดต่อเรา - ครบจังดอทคอม</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS ที่ใช้ร่วมกับหน้าอื่นๆ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Kanit', sans-serif;
+        }
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+        }
+        .header-container {
+            background-color: #004d99;
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header-container h1 {
+            font-size: 2.5em;
+            margin-bottom: 5px;
+        }
+        .header-container p {
+            font-size: 1.2em;
+        }
+        .main-nav {
+            background-color: white;
+            padding: 10px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .main-nav a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            padding: 12px 20px;
+            border-radius: 8px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .main-nav a:hover, .main-nav a.active {
+            background-color: #0066cc;
+            color: white;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        .section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+        .section h2 {
+            margin-bottom: 20px;
+            color: #d90000;
+            font-size: 1.8em;
+            border-bottom: 3px solid #d90000;
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+        .footer {
+            background-color: #222;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        /* สไตล์เฉพาะหน้านี้ */
+        .contact-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .contact-info, .contact-form {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .contact-info h3, .contact-form h3 {
+            font-size: 1.5em;
+            color: #004d99;
+            margin-bottom: 15px;
+        }
+        .contact-info p {
+            margin-bottom: 10px;
+            color: #555;
+            line-height: 1.6;
+        }
+        .contact-info a {
+            color: #d90000;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .contact-form form {
+            display: flex;
+            flex-direction: column;
+        }
+        .contact-form label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        .contact-form input, .contact-form textarea {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+            font-family: 'Kanit', sans-serif;
+            resize: vertical;
+        }
+        .contact-form button {
+            background-color: #0066cc;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .contact-form button:hover {
+            background-color: #004d99;
+        }
+        .ads {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        @media (min-width: 768px) {
+            .contact-content {
+                flex-direction: row;
+            }
+            .contact-info, .contact-form {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header-container">
+        <h1>ครบจังดอทคอม</h1>
+        <p>ข่าว เกม บันเทิง ไอที ไลฟ์สไตล์ ครบจบในเว็บเดียว</p>
+    </header>
+    <nav class="main-nav">
+        <a href="index.html">หน้าแรก</a>
+        <a href="news.html">ข่าว</a>
+        <a href="lotto.html">ตรวจหวย</a>
+        <a href="horoscope.html">ดูดวง</a>
+        <a href="sport.html">กีฬา</a>
+        <a href="video.html">วีดีโอ</a>
+        <a href="games.html">เกมส์</a>
+        <a href="marketplace.html">ซื้อ-ขาย</a>
+        <a href="booking.html">จองออนไลน์</a>
+        <a href="contact.html" class="active">ติดต่อเรา</a>
+    </nav>
+    <div class="container">
+        <div class="ads">
+        </div>
+        <div class="section">
+            <h2>📞 ติดต่อเรา</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3>ข้อมูลการติดต่อ</h3>
+                    <p>หากคุณมีข้อสงสัย, คำแนะนำ, หรือต้องการสอบถามเรื่องการลงโฆษณา สามารถติดต่อเราได้ตามช่องทางด้านล่างนี้</p>
+                    <p><strong>ที่อยู่:</strong> 123 ถนนสมมติ, แขวงสมมติ, เขตสมมติ, กรุงเทพฯ 10100</p>
+                    <p><strong>โทรศัพท์:</strong> 0-2123-4567</p>
+                    <p><strong>อีเมล:</strong> <a href="mailto:contact@korbjang.com">contact@korbjang.com</a></p>
+                    <p><strong>เวลาทำการ:</strong> วันจันทร์ - ศุกร์ (09:00 น. - 17:00 น.)</p>
+                </div>
+                <div class="contact-form">
+                    <h3>ส่งข้อความถึงเรา</h3>
+                    <form action="#" method="post">
+                        <label for="name">ชื่อ-นามสกุล:</label>
+                        <input type="text" id="name" name="name" required>
+                        
+                        <label for="email">อีเมล:</label>
+                        <input type="email" id="email" name="email" required>
+                        
+                        <label for="subject">หัวข้อ:</label>
+                        <input type="text" id="subject" name="subject" required>
+                        
+                        <label for="message">ข้อความ:</label>
+                        <textarea id="message" name="message" rows="5" required></textarea>
+                        
+                        <button type="submit">ส่งข้อความ</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="ads">
+        </div>
+    </div>
+    <footer class="footer">
+        <p>© 2025 ครบจังดอทคอม | <a href="#" style="color:white; text-decoration: underline;">นโยบายความเป็นส่วนตัว</a></p>
+    </footer>
+    <script>
+        // โค้ดสำหรับให้เมนู Active อัตโนมัติ
+        document.addEventListener("DOMContentLoaded", function () {
+            const currentPage = window.location.pathname.split("/").pop();
+            const mainNavLinks = document.querySelectorAll(".main-nav a");
+
+            mainNavLinks.forEach(link => {
+                const linkPage = link.getAttribute("href");
+                if (linkPage === currentPage || (currentPage === "" && linkPage === "index.html")) {
+                    link.classList.add("active");
+                } else {
+                    link.classList.remove("active");
+                }
+            });
+        });
+    </script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+</body>
+</html>

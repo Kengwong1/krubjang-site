@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ครบรส — เวอร์ชัน JSON + Search</title>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0f1113;
+      --card:#16181a;
+      --muted:#9aa4ad;
+      --primary:#00e0ff;
+      --accent:#ffcc00;
+      --danger:#ff4d4f;
+      --glass: rgba(255,255,255,0.03);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:'Kanit',sans-serif;
+      background:linear-gradient(180deg,#0b0c0d 0%, #111214 100%);
+      color:#e8eef1;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+    }
+
+    /* Header */
+    .header{
+      display:flex;
+      gap:1rem;
+      align-items:center;
+      justify-content:space-between;
+      padding:1rem 1.25rem;
+      background:rgba(0,0,0,0.35);
+      border-bottom:1px solid rgba(255,255,255,0.03);
+      position:sticky;
+      top:0;
+      z-index:20;
+      backdrop-filter: blur(6px);
+    }
+    .brand{font-weight:700;color:var(--primary);font-size:1.25rem}
+    .controls{
+      display:flex;
+      gap:.75rem;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .search{
+      background:var(--card);
+      border:1px solid rgba(255,255,255,0.03);
+      padding:.5rem .75rem;
+      border-radius:10px;
+      display:flex;
+      gap:.5rem;
+      align-items:center;
+    }
+    .search input{
+      background:transparent;border:0;color:inherit;outline:none;width:220px;
+      font-size:0.95rem;
+    }
+    .chips{display:flex;gap:.5rem;flex-wrap:wrap}
+    .chip{
+      padding:.45rem .6rem;border-radius:999px;border:1px solid rgba(255,255,255,0.04);
+      background:var(--glass);font-size:.85rem;cursor:pointer;color:var(--muted);
+    }
+    .chip.active{background:linear-gradient(90deg,var(--primary),#0099ff);color:#071018;border-color:transparent}
+
+    /* Main */
+    main{padding:1.25rem;flex:1}
+    .hero{
+      display:flex;gap:1rem;align-items:center;justify-content:space-between;flex-wrap:wrap;
+      margin-bottom:1rem;
+    }
+    .hero h1{margin:0;font-size:1.6rem;color:var(--primary)}
+    .summary{color:var(--muted);font-size:.95rem}
+
+    /* Grid */
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+      gap:1rem;
+    }
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
+      border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.03);
+      box-shadow:0 6px 18px rgba(0,0,0,0.6);
+      display:flex;flex-direction:column;
+      transition:transform .18s ease, box-shadow .18s ease;
+    }
+    .card:hover{transform:translateY(-6px);box-shadow:0 12px 30px rgba(0,0,0,0.7)}
+    .thumb{width:100%;height:340px;object-fit:cover;display:block;background:#222}
+    .info{padding:1rem;display:flex;flex-direction:column;gap:.5rem;flex:1}
+    .title{font-weight:700;color:var(--primary);font-size:1.05rem;margin:0}
+    .meta{font-size:.84rem;color:var(--muted)}
+    .desc{font-size:.92rem;color:#cfd9dd;flex:1;margin-top:.4rem}
+    .actions{display:flex;gap:.5rem;align-items:center;margin-top:.75rem}
+    .btn{
+      border:0;padding:.55rem .8rem;border-radius:10px;font-weight:700;cursor:pointer;
+      background:linear-gradient(90deg,var(--primary), #0099ff);color:#071018;text-decoration:none;
+      display:inline-flex;align-items:center;gap:.5rem;
+    }
+    .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+    .badge{padding:.25rem .5rem;border-radius:6px;background:rgba(255,255,255,0.02);font-size:.78rem;color:var(--muted)}
+
+    /* Footer */
+    footer{padding:1rem;text-align:center;color:var(--muted);font-size:.9rem;border-top:1px solid rgba(255,255,255,0.02);background:transparent}
+
+    /* Age Modal card */
+    #ageCheck{
+      position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.75));z-index:60;
+    }
+    .age-card{
+      background:linear-gradient(180deg,#0f1315,#101214);padding:2rem;border-radius:12px;max-width:520px;width:92%;
+      box-shadow:0 30px 80px rgba(0,0,0,0.8);text-align:center;border:1px solid rgba(255,255,255,0.03)
+    }
+    .age-card h2{margin:0 0 .5rem 0;color:var(--primary)}
+    .age-card p{color:var(--muted);margin:0 0 1rem 0}
+    .age-actions{display:flex;gap:.6rem;justify-content:center;margin-top:1rem;flex-wrap:wrap}
+    .age-actions button{padding:.6rem 1rem;border-radius:10px;border:0;cursor:pointer}
+    .btn-enter{background:linear-gradient(90deg,#32d74b,#10b981);color:#071018;font-weight:700}
+    .btn-exit{background:linear-gradient(90deg,#ff6b6b,#ff3b30);color:white;font-weight:700}
+
+    /* Empty state */
+    .empty{padding:3rem;text-align:center;color:var(--muted);border-radius:8px;border:1px dashed rgba(255,255,255,0.03);background:transparent}
+
+    /* Responsive tweaks */
+    @media(max-width:640px){
+      .thumb{height:260px}
+      .search input{width:120px}
+      .hero{gap:.5rem}
+    }
+  </style>
+</head>
+<body>
+  <!-- Age Gate -->
+  <div id="ageCheck" aria-hidden="false">
+    <div class="age-card" role="dialog" aria-labelledby="ageTitle" aria-modal="true">
+      <h2 id="ageTitle">🔞 ยืนยันอายุ</h2>
+      <p>เว็บไซต์นี้มีเนื้อหาสำหรับผู้ใหญ่ (18+) โปรดยืนยันอายุของคุณก่อนเข้าสู่เว็บไซต์</p>
+      <div class="age-actions">
+        <button class="btn-enter" onclick="enterSite()">ฉันอายุ 18 ปีขึ้นไป</button>
+        <button class="btn-exit" onclick="exitSite()">ยังไม่บรรลุนิติภาวะ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="brand">ครบรส</div>
+    <div class="controls">
+      <div class="search" title="ค้นหา">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></circle></svg>
+        <input id="searchInput" placeholder="ค้นหาชื่อเรื่องหรือหมวด..." />
+      </div>
+      <div id="chips" class="chips" aria-hidden="false">
+        <!-- chips generated by JS -->
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <div>
+        <h1>🌈 หนัง ละคร ซีรี่ย์</h1>
+        <div class="summary">ค้นหา ดู และกรองซีรีส์ตามหมวดหมู่ได้ทันที — ข้อมูลเก็บใน JSON แก้ไขง่าย</div>
+      </div>
+      <div class="summary" id="resultCount">รายการทั้งหมด: 0</div>
+    </div>
+
+    <section id="gridSection">
+      <div id="grid" class="grid" aria-live="polite">
+        <!-- cards rendered here -->
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2025 ซีรีส์ครบรส — สร้างด้วยรัก (และ JSON) ❤️
+  </footer>
+
+  <script>
+    /* ---------------------------
+       Demo JSON data (แก้/เพิ่มได้ที่นี่)
+       ฟิลด์: id, title, category, description, img, link, ageRestricted (true/false)
+    ---------------------------- */
+    const seriesData = [
+      {"id":1,"title":"The Lust Hotel","category":"18+","description":"โรงแรมลึกลับกับความสัมพันธ์ที่ห้ามใจ — ดราม่าและฉากสำหรับผู้ใหญ่","img":"https://via.placeholder.com/600x900/FF7F50/111111?text=The+Lust+Hotel","link":"#","ageRestricted":true},
+      {"id":2,"title":"City of Secrets","category":"18+","description":"เมืองแห่งความลับและความเสื่อม — เรื่องราวมืดซ่อนเงื่อน","img":"https://via.placeholder.com/600x900/00CED1/111111?text=City+of+Secrets","link":"#","ageRestricted":true},
+      {"id":3,"title":"Midnight Whispers","category":"18+","description":"กระซิบยามค่ำคืนที่พาไปสู่ความตื่นเต้นและความลึกลับ","img":"https://via.placeholder.com/600x900/DA70D6/111111?text=Midnight+Whispers","link":"#","ageRestricted":true},
+      {"id":4,"title":"Love in Seoul","category":"เกาหลี","description":"เรื่องรักโรแมนติกในกรุงโซล — หวานซึ้งและพาอบอุ่นหัวใจ","img":"https://via.placeholder.com/600x900/8B0000/FFFFFF?text=Love+in+Seoul","link":"https://www.viu.com","ageRestricted":false},
+      {"id":5,"title":"Crash Landing on You 2","category":"เกาหลี","description":"ภาคต่อที่ทุกคนรอคอยกับความฮาและความเศร้าในเวลาเดียวกัน","img":"https://via.placeholder.com/600x900/FF4500/111111?text=Crash+Landing+S2","link":"https://www.netflix.com","ageRestricted":false},
+      {"id":6,"title":"Itaewon Class 2","category":"เกาหลี","description":"การต่อสู้เพื่อความฝันและมิตรภาพในเมืองอิแทวอน","img":"https://via.placeholder.com/600x900/808000/111111?text=Itaewon+Class+2","link":"https://www.netflix.com","ageRestricted":false},
+      {"id":7,"title":"All of Us Are Dead S2","category":"เกาหลี","description":"การเอาชีวิตรอดจากซอมบี้ — ระทึกขวัญเข้มข้น","img":"https://via.placeholder.com/600x900/4B0082/FFFFFF?text=All+of+Us+S2","link":"https://www.netflix.com","ageRestricted":false},
+      {"id":8,"title":"The Untamed","category":"จีน","description":"การเดินทางของสองสหายในการแก้ไขคดีและมิตรภาพลึกซึ้ง","img":"https://via.placeholder.com/600x900/20B2AA/111111?text=The+Untamed","link":"https://wetv.vip","ageRestricted":false},
+      {"id":9,"title":"Love O2O","category":"จีน","description":"ความรักในโลกออนไลน์ที่นำมาสู่ชีวิตจริง — โรแมนติกอารมณ์ดี","img":"https://via.placeholder.com/600x900/9370DB/111111?text=Love+O2O","link":"https://www.iq.com","ageRestricted":false},
+      {"id":10,"title":"You Are My Glory","category":"จีน","description":"เรื่องราวความรักระหว่างคนดังและวิศวกรอวกาศ — หวานและเป็นแรงบันดาลใจ","img":"https://via.placeholder.com/600x900/48D1CC/111111?text=You+Are+My+Glory","link":"https://wetv.vip","ageRestricted":false},
+      {"id":11,"title":"The King's Avatar","category":"จีน","description":"นักแข่งเกมมืออาชีพกลับมาสู่เวทีอีกครั้ง — สำหรับคอเกม","img":"https://via.placeholder.com/600x900/C71585/111111?text=The+King%27s+Avatar","link":"https://wetv.vip","ageRestricted":false},
+      {"id":12,"title":"Squid Game S2","category":"สยองขวัญ","description":"เกมเดิมพันชีวิตที่ไม่มีใครคาดคิด — ดราม่าเข้มข้นและตึงเครียด","img":"https://via.placeholder.com/600x900/8B0000/FFFFFF?text=Squid+Game+S2","link":"https://www.netflix.com","ageRestricted":false},
+      {"id":13,"title":"Hellbound","category":"สยองขวัญ","description":"ปรากฏการณ์เหนือธรรมชาติที่ทำให้เมืองตกอยู่ในความหวาดกลัว","img":"https://via.placeholder.com/600x900/2F4F4F/FFFFFF?text=Hellbound","link":"https://www.netflix.com","ageRestricted":false},
+      {"id":14,"title":"Dangerous Liaisons","category":"ดราม่า","description":"ความสัมพันธ์ที่ซับซ้อนและผลลัพธ์ที่ไม่อาจคาดเดา","img":"https://via.placeholder.com/600x900/F4A460/111111?text=Dangerous+Liaisons","link":"#","ageRestricted":false},
+      {"id":15,"title":"Secret Garden","category":"ดราม่า","description":"สวนลับที่เก็บเรื่องราวและความลับมากมาย — จังหวะเรื่องดีและซึ้งๆ","img":"https://via.placeholder.com/600x900/8A2BE2/111111?text=Secret+Garden","link":"#","ageRestricted":false},
+      {"id":16,"title":"The Unspoken","category":"ดราม่า","description":"ความลับที่ถูกรักษาไว้แต่ใกล้จะเปิดเผย เรื่องราวเข้มข้น","img":"https://via.placeholder.com/600x900/008B8B/111111?text=The+Unspoken","link":"#","ageRestricted":false},
+      {"id":17,"title":"Erotic Dreams","category":"18+","description":"การผจญภัยในโลกแห่งความฝันที่ร้อนแรง — สำหรับผู้ใหญ่เท่านั้น","img":"https://via.placeholder.com/600x900/A0522D/111111?text=Erotic+Dreams","link":"#","ageRestricted":true},
+      {"id":18,"title":"The Temptation","category":"18+","description":"บททดสอบแห่งแรงปรารถนาและความสัมพันธ์ที่สลับซับซ้อน","img":"https://via.placeholder.com/600x900/4682B4/111111?text=The+Temptation","link":"#","ageRestricted":true},
+      {"id":19,"title":"Comedy Nights","category":"ตลก","description":"รายการซีรีส์ตลกเรียกเสียงหัวเราะจากทุกตอน — ผ่อนคลายได้ดี","img":"https://via.placeholder.com/600x900/FFD700/111111?text=Comedy+Nights","link":"#","ageRestricted":false},
+      {"id":20,"title":"Office Laughter","category":"ตลก","description":"มุมมองขำๆ ในชีวิตคนทำงาน พร้อมมุกและสถานการณ์ฮาๆ","img":"https://via.placeholder.com/600x900/FF8C00/111111?text=Office+Laughter","link":"#","ageRestricted":false}
+    ];
+
+    /* ---------------------------
+       App state
+    ---------------------------- */
+    const categories = ["ทั้งหมด", ...Array.from(new Set(seriesData.map(s=>s.category)))];
+    let activeCategory = "ทั้งหมด";
+    let query = "";
+
+    /* ---------------------------
+       DOM refs
+    ---------------------------- */
+    const grid = document.getElementById('grid');
+    const chipsEl = document.getElementById('chips');
+    const searchInput = document.getElementById('searchInput');
+    const resultCount = document.getElementById('resultCount');
+    const ageCheck = document.getElementById('ageCheck');
+
+    /* ---------------------------
+       Render chips
+    ---------------------------- */
+    function renderChips(){
+      chipsEl.innerHTML = "";
+      categories.forEach(cat=>{
+        const btn = document.createElement('button');
+        btn.className = 'chip' + (cat===activeCategory ? ' active' : '');
+        btn.textContent = cat;
+        btn.onclick = ()=>{
+          activeCategory = cat;
+          renderChips();
+          renderGrid();
+        };
+        chipsEl.appendChild(btn);
+      });
+    }
+
+    /* ---------------------------
+       Render grid (with search + filter)
+    ---------------------------- */
+    function renderGrid(){
+      const filtered = seriesData.filter(s=>{
+        // ageRestricted items should remain visible once age gate passed (we assume user passed)
+        const matchesCategory = (activeCategory==="ทั้งหมด") ? true : s.category===activeCategory;
+        const q = query.trim().toLowerCase();
+        const matchesQuery = q === "" ? true : (s.title.toLowerCase().includes(q) || s.category.toLowerCase().includes(q) || s.description.toLowerCase().includes(q));
+        return matchesCategory && matchesQuery;
+      });
+      grid.innerHTML = "";
+      resultCount.textContent = `รายการทั้งหมด: ${filtered.length}`;
+      if(filtered.length===0){
+        const e = document.createElement('div');
+        e.className='empty';
+        e.textContent = 'ไม่พบรายการที่ตรงกับการค้นหา ลองปรับคำค้นหรือหมวดหมู่ดูนะคะ';
+        grid.appendChild(e);
+        return;
+      }
+      filtered.forEach(s=>{
+        const card = document.createElement('article');
+        card.className='card';
+        card.innerHTML = `
+          <img class="thumb" loading="lazy" src="${s.img}" alt="${escapeHtml(s.title)}">
+          <div class="info">
+            <div style="display:flex;justify-content:space-between;gap:.5rem;align-items:center">
+              <h3 class="title">${escapeHtml(s.title)}</h3>
+              <div class="badge">${escapeHtml(s.category)}</div>
+            </div>
+            <div class="meta">${s.ageRestricted ? 'สำหรับผู้ใหญ่' : 'ทุกวัย (ขึ้นกับแพลตฟอร์ม)'}</div>
+            <div class="desc">${escapeHtml(s.description)}</div>
+            <div class="actions">
+              <a class="btn" href="${s.link}" target="_blank" rel="noopener noreferrer">${s.link && s.link!=='#' ? 'ดูเลย' : 'รายละเอียด'}</a>
+              <button class="btn secondary" onclick="shareItem(${s.id})">แชร์</button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    /* ---------------------------
+       Search handling
+    ---------------------------- */
+    searchInput.addEventListener('input', (e)=>{
+      query = e.target.value;
+      renderGrid();
+    });
+
+    /* ---------------------------
+       Simple share (copy link)
+    ---------------------------- */
+    function shareItem(id){
+      const s = seriesData.find(x=>x.id===id);
+      if(!s) return;
+      const url = s.link && s.link!=='#' ? s.link : `${location.href}#series-${id}`;
+      navigator.clipboard?.writeText(url).then(()=>{
+        alert('คัดลอกลิงก์เรียบร้อย: ' + url);
+      }).catch(()=>{ alert('ไม่สามารถคัดลอกอัตโนมัติได้ ลิงก์: ' + url) });
+    }
+
+    /* ---------------------------
+       Utils
+    ---------------------------- */
+    function escapeHtml(text){ return String(text).replace(/[&<>"']/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]); }); }
+
+    /* ---------------------------
+       Age gate logic (localStorage)
+    ---------------------------- */
+    window.enterSite = function(){
+      localStorage.setItem('ageConfirmed','true');
+      ageCheck.style.display = 'none';
+      ageCheck.setAttribute('aria-hidden','true');
+      initApp();
+    }
+    window.exitSite = function(){
+      localStorage.removeItem('ageConfirmed');
+      alert('ขออภัย เว็บไซต์นี้สำหรับผู้ที่มีอายุ 18 ปีขึ้นไปเท่านั้น');
+      // redirect ไปที่อื่น (ปรับได้)
+      window.location.href = 'https://www.google.com';
+    }
+
+    function initApp(){
+      renderChips();
+      renderGrid();
+    }
+
+    /* ---------------------------
+       Bootstrap on load
+    ---------------------------- */
+    window.addEventListener('DOMContentLoaded', ()=>{
+      const confirmed = localStorage.getItem('ageConfirmed');
+      if(confirmed === 'true'){
+        ageCheck.style.display = 'none';
+        ageCheck.setAttribute('aria-hidden','true');
+        initApp();
+      } else {
+        ageCheck.style.display = 'flex';
+        ageCheck.setAttribute('aria-hidden','false');
+      }
+    });
+
+    /* Accessibility: close age modal with Escape (only if not confirmed) */
+    window.addEventListener('keydown', (e)=>{
+      if(e.key === 'Escape'){
+        const confirmed = localStorage.getItem('ageConfirmed');
+        if(confirmed === 'true') return;
+        // small hint
+        alert('โปรดยืนยันอายุเพื่อเข้าสู่เว็บไซต์ค่ะ');
+      }
+    });
+  </script>
+</body>
+</html>
